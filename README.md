@@ -27,11 +27,9 @@ The app's interface is currently in Turkish.
 
 Microsoft Defender SmartScreen shows this warning because `Nimbus.exe` isn't code-signed. To continue, select **More info**, then **Run anyway**. You only need to do this once for each downloaded version.
 
-### "Google hasn't verified this app"
+### Google sign-in
 
-Google may show this warning when you sign in if it hasn't verified the app. To continue, select **Advanced**, then **Go to Nimbus (unsafe)**. Nimbus only asks for the `drive.file` permission, which limits it to files it created itself. It can't see the rest of your Drive.
-
-If the Google Cloud project is in testing mode, only listed test users can sign in, and they must sign in again every week.
+Your browser opens Google's sign-in page, which shows the Nimbus name and asks for permission to access Drive files. That's the only permission Nimbus asks for (`drive.file`). It limits Nimbus to files it created itself, so it can't see the rest of your Drive.
 
 ## Privacy
 

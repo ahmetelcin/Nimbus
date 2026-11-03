@@ -1,0 +1,8 @@
+bin/
+obj/
+publish/
+.vs/
+*.user
+
+# OAuth kimlik bilgileri repoya girmez
+client_secret*.json

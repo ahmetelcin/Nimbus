@@ -2,20 +2,20 @@ using System.IO.Pipes;
 using System.Security.Principal;
 using System.Text;
 
-namespace DriveAc;
+namespace Nimbus;
 
 internal sealed class SingleInstance : IDisposable
 {
     private const int ConnectTimeoutMs = 5000;
 
     private static readonly string UserKey = WindowsIdentity.GetCurrent().User!.Value;
-    private static readonly string PipeName = $"DriveAc-{UserKey}";
+    private static readonly string PipeName = $"Nimbus-{UserKey}";
 
     private readonly Mutex _mutex;
 
     public SingleInstance()
     {
-        _mutex = new Mutex(initiallyOwned: true, $@"Local\DriveAc-{UserKey}", out var createdNew);
+        _mutex = new Mutex(initiallyOwned: true, $@"Local\Nimbus-{UserKey}", out var createdNew);
         IsPrimary = createdNew;
     }
 

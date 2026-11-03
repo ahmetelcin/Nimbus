@@ -1,10 +1,11 @@
+using System.Diagnostics;
 using System.Threading.Channels;
 using System.Windows;
 using Google.Apis.Auth.OAuth2.Responses;
 using Microsoft.Win32;
 using Wpf.Ui.Appearance;
 
-namespace DriveAc;
+namespace Nimbus;
 
 public partial class App : Application
 {
@@ -19,6 +20,7 @@ public partial class App : Application
     private FileOpener _opener = null!;
     private TrayIcon _tray = null!;
     private SignInWindow? _signInWindow;
+    private SettingsWindow? _settingsWindow;
 
     internal IReadOnlyList<string> InitialPaths { get; init; } = [];
 
@@ -34,10 +36,16 @@ public partial class App : Application
         _notifier = new Notifier();
         _session = new Session(_notifier);
         _opener = new FileOpener(_session, _notifier);
-        _tray = new TrayIcon(
-            signIn: () => _ = SignInAsync(),
-            signOut: () => _ = Enqueue(_session.SignOutAsync),
-            exit: ExitApp);
+        _tray = new TrayIcon(new TrayActions(
+            SignIn: () => _ = SignInAsync(),
+            SignOut: () => _ = Enqueue(_session.SignOutAsync),
+            LinkFileTypes: LinkFileTypes,
+            CleanOldFiles: () => _ = Enqueue(CleanOldFilesAsync),
+            OpenSettings: ShowSettingsWindow,
+            Exit: ExitApp));
+
+        FileAssociations.RefreshIfRegistered();
+        AutoStart.RefreshIfEnabled();
 
         _session.Changed += OnSessionChanged;
         _notifier.StatusChanged += status => Dispatcher.InvokeAsync(() => _tray.SetStatus(status));
@@ -57,7 +65,7 @@ public partial class App : Application
         if (message.Length > 0)
             _ = Enqueue(() => _opener.OpenAsync(message));
         else if (_session.IsSignedIn)
-            _notifier.ShowInfo("DriveAç çalışıyor", "Menüye sistem tepsisindeki simgeden ulaşabilirsiniz.");
+            _notifier.ShowInfo("Nimbus çalışıyor", "Menüye sistem tepsisindeki simgeden ulaşabilirsiniz.");
         else
             ShowSignInWindow();
     }
@@ -92,6 +100,59 @@ public partial class App : Application
         _signInWindow.Activate();
     }
 
+    private void ShowSettingsWindow()
+    {
+        if (_settingsWindow is null)
+        {
+            _settingsWindow = new SettingsWindow(LinkFileTypes, UnlinkFileTypes);
+            _settingsWindow.Closed += (_, _) => _settingsWindow = null;
+            _settingsWindow.Show();
+        }
+
+        _settingsWindow.Activate();
+    }
+
+    // Windows, varsayılan uygulamanın programla seçilmesine izin vermez; kullanıcı Ayarlar'dan seçer.
+    private void LinkFileTypes()
+    {
+        FileAssociations.Register();
+        Process.Start(new ProcessStartInfo(FileAssociations.SettingsUri) { UseShellExecute = true });
+        _notifier.ShowInfo("Dosya türleri kaydedildi", "Açılan sayfada her uzantı için Nimbus'u varsayılan yapın.");
+    }
+
+    private void UnlinkFileTypes()
+    {
+        FileAssociations.Unregister();
+        _notifier.ShowInfo("Dosya türü bağlantıları kaldırıldı", "Nimbus artık Varsayılan uygulamalar listesinde görünmez.");
+    }
+
+    private async Task CleanOldFilesAsync()
+    {
+        var credential = await _session.GetCredentialAsync();
+        using var uploader = new DriveUploader(credential);
+
+        var days = AppSettings.Load().CleanupDays;
+        var fileIds = await uploader.ListFilesOlderThanAsync(days);
+        if (fileIds.Count == 0)
+        {
+            _notifier.ShowInfo("Temizlenecek dosya yok", $"Nimbus klasöründe {days} günden eski dosya bulunmuyor.");
+            return;
+        }
+
+        var confirm = new Wpf.Ui.Controls.MessageBox
+        {
+            Title = "Eski dosyaları temizle",
+            Content = $"Nimbus klasöründe {days} gündür değişmeyen {fileIds.Count} dosya çöp kutusuna taşınacak.",
+            PrimaryButtonText = "Çöp kutusuna taşı",
+            CloseButtonText = "Vazgeç",
+        };
+        if (await confirm.ShowDialogAsync() != Wpf.Ui.Controls.MessageBoxResult.Primary)
+            return;
+
+        await uploader.MoveToTrashAsync(fileIds);
+        _notifier.ShowInfo("Temizlik tamamlandı", $"{fileIds.Count} dosya çöp kutusuna taşındı.");
+    }
+
     private void OnSessionChanged()
     {
         _tray.SetAccount(_session.IsSignedIn, _session.Email);
@@ -120,6 +181,12 @@ public partial class App : Application
             {
                 await item.Run();
                 item.Done.SetResult(true);
+            }
+            catch (TokenResponseException)
+            {
+                await _session.ExpireAsync();
+                _notifier.ShowError("Oturumunuz sona erdi. Yeniden giriş yapıp tekrar deneyin.");
+                item.Done.SetResult(false);
             }
             catch (Exception ex)
             {

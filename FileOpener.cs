@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Google.Apis.Auth.OAuth2.Responses;
 
-namespace DriveAc;
+namespace Nimbus;
 
 internal sealed class FileOpener(Session session, Notifier notifier)
 {
@@ -18,7 +18,7 @@ internal sealed class FileOpener(Session session, Notifier notifier)
             string link;
             try
             {
-                link = await UploadAsync(path, fileType);
+                link = await GetLinkAsync(path, fileType);
             }
             catch (TokenResponseException)
             {
@@ -26,10 +26,10 @@ internal sealed class FileOpener(Session session, Notifier notifier)
                 notifier.ClearProgress();
                 await session.ExpireAsync();
                 notifier.ShowInfo("Oturumunuz sona erdi", "Devam etmek için yeniden giriş yapın.");
-                link = await UploadAsync(path, fileType);
+                link = await GetLinkAsync(path, fileType);
             }
 
-            Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
+            OpenInBrowser(link);
         }
         finally
         {
@@ -37,11 +37,36 @@ internal sealed class FileOpener(Session session, Notifier notifier)
         }
     }
 
-    private async Task<string> UploadAsync(string path, FileType fileType)
+    private async Task<string> GetLinkAsync(string path, FileType fileType)
     {
         var credential = await session.GetCredentialAsync();
-        notifier.ShowProgress(Path.GetFileName(path));
         using var uploader = new DriveUploader(credential);
-        return await uploader.UploadAndConvertAsync(path, fileType, notifier.UpdateProgress);
+
+        if (UploadHistory.FindUnchangedCopy(path) is { } fileId
+            && await uploader.GetExistingLinkAsync(fileId) is { } existingLink)
+        {
+            notifier.ShowInfo("Önceki kopya açılıyor", $"{Path.GetFileName(path)} değişmediği için yeniden yüklenmedi.");
+            return existingLink;
+        }
+
+        var snapshot = UploadHistory.Capture(path);
+        notifier.ShowProgress(Path.GetFileName(path));
+        var uploaded = await uploader.UploadAndConvertAsync(path, fileType, notifier.UpdateProgress);
+        UploadHistory.Save(path, snapshot with { FileId = uploaded.Id });
+        return uploaded.WebViewLink;
+    }
+
+    private static void OpenInBrowser(string link)
+    {
+        if (AppSettings.Load().BrowserPath is { } browser && File.Exists(browser))
+        {
+            var startInfo = new ProcessStartInfo(browser) { UseShellExecute = false };
+            startInfo.ArgumentList.Add(link);
+            Process.Start(startInfo);
+        }
+        else
+        {
+            Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
+        }
     }
 }

@@ -6,13 +6,13 @@ using Microsoft.Win32;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 
-namespace DriveAc;
+namespace Nimbus;
 
 internal sealed class Notifier
 {
-    private const string AppTitle = "DriveAç";
-    private const string AppUserModelId = "DriveAc.App";
-    private const string Group = "driveac";
+    private const string AppTitle = "Nimbus";
+    private const string AppUserModelId = "Nimbus.App";
+    private const string Group = "nimbus";
     private const string ProgressTag = "upload";
 
     private readonly ToastNotifier _notifier;
@@ -32,7 +32,7 @@ internal sealed class Notifier
 
     public void ShowError(string message)
     {
-        if (!AreEnabled() || !TryShow(CreateTextToast("DriveAç: işlem tamamlanamadı", message)))
+        if (!AreEnabled() || !TryShow(CreateTextToast("Nimbus: işlem tamamlanamadı", message)))
             MessageBox.Show(message, AppTitle, MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
@@ -161,7 +161,7 @@ internal sealed class Notifier
     private static void Register()
     {
         Directory.CreateDirectory(Path.GetDirectoryName(AppPaths.NotificationIconFile)!);
-        using (var icon = Application.GetResourceStream(new Uri("pack://application:,,,/Assets/DriveAc.png")).Stream)
+        using (var icon = Application.GetResourceStream(new Uri("pack://application:,,,/Assets/Nimbus.png")).Stream)
         using (var file = File.Create(AppPaths.NotificationIconFile))
             icon.CopyTo(file);
 

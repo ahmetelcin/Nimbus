@@ -1,4 +1,4 @@
-namespace DriveAc;
+namespace Nimbus;
 
 internal sealed record FileType(string SourceMimeType, string GoogleMimeType);
 
@@ -24,6 +24,8 @@ internal static class FileTypes
         [".ods"] = new("application/vnd.oasis.opendocument.spreadsheet", Sheets),
         [".csv"] = new("text/csv", Sheets),
     };
+
+    public static IEnumerable<string> Extensions => ByExtension.Keys;
 
     public static FileType? Find(string path) => ByExtension.GetValueOrDefault(Path.GetExtension(path));
 }

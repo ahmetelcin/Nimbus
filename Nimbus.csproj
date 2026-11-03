@@ -4,11 +4,11 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <UseWPF>true</UseWPF>
-    <StartupObject>DriveAc.Program</StartupObject>
-    <ApplicationIcon>Assets\DriveAc.ico</ApplicationIcon>
-    <RootNamespace>DriveAc</RootNamespace>
-    <AssemblyName>DriveAc</AssemblyName>
-    <Product>DriveAç</Product>
+    <StartupObject>Nimbus.Program</StartupObject>
+    <ApplicationIcon>Assets\Nimbus.ico</ApplicationIcon>
+    <RootNamespace>Nimbus</RootNamespace>
+    <AssemblyName>Nimbus</AssemblyName>
+    <Product>Nimbus</Product>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -21,8 +21,8 @@
     <Using Include="System.IO" />
     <Using Include="System.Net.Http" />
     <None Update="client_secret.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
-    <Resource Include="Assets\DriveAc.ico" />
-    <Resource Include="Assets\DriveAc.png" />
+    <Resource Include="Assets\Nimbus.ico" />
+    <Resource Include="Assets\Nimbus.png" />
   </ItemGroup>
 
   <ItemGroup>

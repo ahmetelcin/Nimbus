@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using Google;
 using Google.Apis.Auth.OAuth2.Responses;
 
-namespace DriveAc;
+namespace Nimbus;
 
 internal sealed class UserMessageException(string message) : Exception(message);
 

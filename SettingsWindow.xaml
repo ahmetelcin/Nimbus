@@ -1,0 +1,78 @@
+<ui:FluentWindow
+    x:Class="Nimbus.SettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Nimbus Ayarları"
+    Width="580"
+    Height="420"
+    Icon="Assets/Nimbus.ico"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    ExtendsContentIntoTitleBar="True"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Title="Nimbus Ayarları" ShowMaximize="False" ShowMinimize="False" />
+
+        <StackPanel Grid.Row="1" Margin="24,8,24,24">
+            <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon Globe24}">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock FontTypography="BodyStrong" Text="Tarayıcı" />
+                        <ui:TextBlock x:Name="BrowserText" Appearance="Secondary" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <StackPanel Orientation="Horizontal">
+                    <ui:Button Click="OnChooseBrowserClick" Content="Seç…" />
+                    <ui:Button x:Name="DefaultBrowserButton" Margin="8,0,0,0" Click="OnDefaultBrowserClick" Content="Varsayılan" />
+                </StackPanel>
+            </ui:CardControl>
+
+            <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon Delete24}">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock FontTypography="BodyStrong" Text="Eski dosyaları temizle" />
+                        <ui:TextBlock Appearance="Secondary" Text="Kaç gündür değişmeyen dosyalar çöp kutusuna taşınsın?" TextWrapping="Wrap" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:NumberBox
+                    x:Name="CleanupDaysBox"
+                    Width="130"
+                    ClearButtonEnabled="False"
+                    MaxDecimalPlaces="0"
+                    Maximum="3650"
+                    Minimum="1"
+                    ValueChanged="OnCleanupDaysChanged" />
+            </ui:CardControl>
+
+            <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon Power24}">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock FontTypography="BodyStrong" Text="Windows ile başlat" />
+                        <ui:TextBlock Appearance="Secondary" Text="Oturum açınca Nimbus tepside çalışmaya başlar." TextWrapping="Wrap" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:ToggleSwitch x:Name="AutoStartSwitch" Click="OnAutoStartClick" />
+            </ui:CardControl>
+
+            <ui:CardControl Icon="{ui:SymbolIcon Document24}">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock FontTypography="BodyStrong" Text="Dosya türleri" />
+                        <ui:TextBlock Appearance="Secondary" Text="Office dosyalarını Nimbus ile açın." TextWrapping="Wrap" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <StackPanel Orientation="Horizontal">
+                    <ui:Button Click="OnLinkFileTypesClick" Content="Bağla…" />
+                    <ui:Button Margin="8,0,0,0" Click="OnUnlinkFileTypesClick" Content="Bağlantıyı kaldır" />
+                </StackPanel>
+            </ui:CardControl>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>

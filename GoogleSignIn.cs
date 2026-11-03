@@ -4,7 +4,7 @@ using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Drive.v3;
 using Google.Apis.Util.Store;
 
-namespace DriveAc;
+namespace Nimbus;
 
 internal static class GoogleSignIn
 {
@@ -94,7 +94,7 @@ internal static class GoogleSignIn
     private static ClientSecrets LoadClientSecrets()
     {
         if (!File.Exists(AppPaths.ClientSecretFile))
-            throw new UserMessageException("client_secret.json bulunamadı. Dosya, DriveAc.exe ile aynı klasörde olmalı.");
+            throw new UserMessageException("client_secret.json bulunamadı. Dosya, Nimbus.exe ile aynı klasörde olmalı.");
 
         ClientSecrets? secrets = null;
         try

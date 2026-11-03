@@ -1,12 +1,16 @@
 using System.Text.Json;
 
-namespace DriveAc;
+namespace Nimbus;
 
 internal sealed class AppSettings
 {
     public string? DriveFolderId { get; set; }
 
     public string? AccountEmail { get; set; }
+
+    public string? BrowserPath { get; set; }
+
+    public int CleanupDays { get; set; } = 30;
 
     public static AppSettings Load()
     {

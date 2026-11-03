@@ -1,7 +1,7 @@
 using Google;
 using Google.Apis.Auth.OAuth2;
 
-namespace DriveAc;
+namespace Nimbus;
 
 internal sealed class Session(Notifier notifier)
 {

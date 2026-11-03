@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace DriveAc;
+namespace Nimbus;
 
 internal static class Program
 {
@@ -16,9 +16,11 @@ internal static class Program
             if (SingleInstance.TrySend(paths))
                 return 0;
 
-            MessageBox.Show("Çalışan DriveAç uygulamasına ulaşılamadı.", "DriveAç", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("Çalışan Nimbus uygulamasına ulaşılamadı.", "Nimbus", MessageBoxButton.OK, MessageBoxImage.Error);
             return 1;
         }
+
+        LegacyMigration.Run();
 
         var app = new App { InitialPaths = paths, Instance = instance };
         app.InitializeComponent();

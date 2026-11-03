@@ -1,7 +1,7 @@
 using System.Windows;
 using Wpf.Ui.Controls;
 
-namespace DriveAc;
+namespace Nimbus;
 
 public partial class SignInWindow : FluentWindow
 {

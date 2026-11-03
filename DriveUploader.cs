@@ -3,6 +3,7 @@ using Google;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
+using Google.Apis.Upload;
 using DriveFile = Google.Apis.Drive.v3.Data.File;
 
 namespace DriveAc;
@@ -11,6 +12,7 @@ internal sealed class DriveUploader(UserCredential credential) : IDisposable
 {
     private const string FolderName = "DriveAc";
     private const string FolderMimeType = "application/vnd.google-apps.folder";
+    private const int ProgressChunkSize = ResumableUpload.MinimumChunkSize * 4;
 
     private readonly DriveService _service = new(new BaseClientService.Initializer
     {
@@ -18,10 +20,20 @@ internal sealed class DriveUploader(UserCredential credential) : IDisposable
         ApplicationName = "DriveAc",
     });
 
-    public async Task<string> UploadAndConvertAsync(string path, FileType fileType)
+    public async Task<string> GetAccountEmailAsync()
+    {
+        var request = _service.About.Get();
+        request.Fields = "user(emailAddress)";
+        var about = await request.ExecuteAsync();
+        return about.User.EmailAddress;
+    }
+
+    // onProgress: 0..1 yüklenen oran; null ise dosya Google tarafında dönüştürülüyor.
+    public async Task<string> UploadAndConvertAsync(string path, FileType fileType, Action<double?> onProgress)
     {
         using var content = OpenForUpload(path);
         var folderId = await EnsureFolderAsync();
+        var length = content.Length;
 
         var metadata = new DriveFile
         {
@@ -32,6 +44,16 @@ internal sealed class DriveUploader(UserCredential credential) : IDisposable
 
         var request = _service.Files.Create(metadata, content, fileType.SourceMimeType);
         request.Fields = "id,webViewLink";
+        request.ChunkSize = ProgressChunkSize;
+
+        // Son parçanın yanıtı dönüştürme bitince gelir; bu yüzden o noktadan sonrası belirsiz gösterilir.
+        void Report(long sent) => onProgress(sent + ProgressChunkSize >= length ? null : (double)sent / length);
+        request.ProgressChanged += p =>
+        {
+            if (p.Status == UploadStatus.Uploading)
+                Report(p.BytesSent);
+        };
+        Report(0);
 
         var progress = await request.UploadAsync();
         if (progress.Exception is not null)

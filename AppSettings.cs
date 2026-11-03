@@ -6,6 +6,8 @@ internal sealed class AppSettings
 {
     public string? DriveFolderId { get; set; }
 
+    public string? AccountEmail { get; set; }
+
     public static AppSettings Load()
     {
         try

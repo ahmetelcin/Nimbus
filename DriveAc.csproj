@@ -2,8 +2,10 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <StartupObject>DriveAc.Program</StartupObject>
+    <ApplicationIcon>Assets\DriveAc.ico</ApplicationIcon>
     <RootNamespace>DriveAc</RootNamespace>
     <AssemblyName>DriveAc</AssemblyName>
     <Product>DriveAç</Product>
@@ -16,12 +18,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Using Include="System.IO" />
+    <Using Include="System.Net.Http" />
     <None Update="client_secret.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <Resource Include="Assets\DriveAc.ico" />
+    <Resource Include="Assets\DriveAc.png" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Apis.Auth" Version="1.78.0" />
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.77.0.4301" />
+    <PackageReference Include="H.NotifyIcon.Wpf" Version="2.4.1" />
+    <PackageReference Include="WPF-UI" Version="4.3.0" />
   </ItemGroup>
 
 </Project>

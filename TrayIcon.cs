@@ -12,12 +12,14 @@ internal sealed record TrayActions(
     Action LinkFileTypes,
     Action CleanOldFiles,
     Action OpenSettings,
+    Action<RecentFile> SaveToComputer,
     Action Exit);
 
 internal sealed class TrayIcon : IDisposable
 {
     private const string DefaultToolTip = "Nimbus";
     private const int MaxToolTipLength = 120;
+    private const double MaxFileNameWidth = 320;
 
     private readonly TaskbarIcon _icon;
     private readonly TrayActions _actions;
@@ -25,8 +27,11 @@ internal sealed class TrayIcon : IDisposable
     private MenuItem _account = null!;
     private MenuItem _signIn = null!;
     private MenuItem _signOut = null!;
+    private MenuItem _recentMenu = null!;
+    private Separator _recentSeparator = null!;
     private bool _signedIn;
     private string? _email;
+    private IReadOnlyList<RecentFile> _recentFiles = [];
 
     public TrayIcon(TrayActions actions)
     {
@@ -51,6 +56,16 @@ internal sealed class TrayIcon : IDisposable
         ApplyAccountState();
     }
 
+    public void SetRecentFiles(IReadOnlyList<RecentFile> files)
+    {
+        // Her arka plan turunda yeniden kurulsa açık alt menü kapanırdı.
+        if (files.SequenceEqual(_recentFiles))
+            return;
+
+        _recentFiles = files;
+        ApplyRecentFiles();
+    }
+
     public void SetStatus(string? status)
     {
         var text = status ?? DefaultToolTip;
@@ -71,11 +86,15 @@ internal sealed class TrayIcon : IDisposable
         _account = new MenuItem { IsEnabled = false };
         _signIn = CreateItem("Giriş yap", _actions.SignIn);
         _signOut = CreateItem("Hesaptan çıkış yap", _actions.SignOut);
+        _recentMenu = new MenuItem { Header = "Son dosyalar" };
+        _recentSeparator = new Separator();
 
         var menu = new ContextMenu();
         menu.Items.Add(_account);
         menu.Items.Add(_signIn);
         menu.Items.Add(_signOut);
+        menu.Items.Add(_recentSeparator);
+        menu.Items.Add(_recentMenu);
         menu.Items.Add(new Separator());
         menu.Items.Add(CreateItem("Dosya türlerini bağla…", _actions.LinkFileTypes));
         menu.Items.Add(CreateItem("Eski dosyaları temizle", _actions.CleanOldFiles));
@@ -84,7 +103,32 @@ internal sealed class TrayIcon : IDisposable
         menu.Items.Add(CreateItem("Nimbus'u kapat", _actions.Exit));
 
         ApplyAccountState();
+        ApplyRecentFiles();
         _icon.ContextMenu = menu;
+    }
+
+    private void ApplyRecentFiles()
+    {
+        _recentMenu.Items.Clear();
+        foreach (var file in _recentFiles)
+            _recentMenu.Items.Add(CreateRecentItem(file));
+        _recentMenu.IsEnabled = _recentFiles.Count > 0;
+    }
+
+    private MenuItem CreateRecentItem(RecentFile file)
+    {
+        var item = new MenuItem
+        {
+            // Düz metin başlıkta WPF alt çizgiyi kısayol sayıp dosya adından siler.
+            Header = new TextBlock
+            {
+                Text = Path.GetFileName(file.Path),
+                MaxWidth = MaxFileNameWidth,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+            },
+        };
+        item.Items.Add(CreateItem("Bilgisayara kaydet", () => _actions.SaveToComputer(file)));
+        return item;
     }
 
     private static MenuItem CreateItem(string header, Action action)
@@ -99,5 +143,7 @@ internal sealed class TrayIcon : IDisposable
         _account.Header = _signedIn ? _email ?? "Giriş yapıldı" : "Giriş yapılmadı";
         _signIn.Visibility = _signedIn ? Visibility.Collapsed : Visibility.Visible;
         _signOut.Visibility = _signedIn ? Visibility.Visible : Visibility.Collapsed;
+        _recentMenu.Visibility = _signOut.Visibility;
+        _recentSeparator.Visibility = _signOut.Visibility;
     }
 }

@@ -1,0 +1,48 @@
+<ui:FluentWindow
+    x:Class="Nimbus.ReopenWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Nimbus"
+    Width="460"
+    SizeToContent="Height"
+    Icon="Assets/Nimbus.ico"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    ExtendsContentIntoTitleBar="True"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Title="Nimbus" ShowMaximize="False" ShowMinimize="False" />
+
+        <StackPanel Grid.Row="1" Margin="24,0,24,24">
+            <ui:TextBlock
+                Margin="0,0,0,8"
+                FontTypography="Subtitle"
+                Text="Google'daki kopya farklı"
+                TextWrapping="Wrap" />
+            <ui:TextBlock
+                x:Name="MessageText"
+                Margin="0,0,0,20"
+                Appearance="Secondary"
+                TextWrapping="Wrap" />
+            <ui:Button
+                Margin="0,0,0,8"
+                HorizontalAlignment="Stretch"
+                Appearance="Primary"
+                Click="OnContinueClick"
+                Content="Kaldığın yerden devam et (Google'daki son hal)" />
+            <ui:Button
+                Margin="0,0,0,16"
+                HorizontalAlignment="Stretch"
+                Click="OnStartOverClick"
+                Content="Bilgisayardaki dosyayla baştan başla (yeni kopya yükle)" />
+            <CheckBox x:Name="DontAskAgainBox" Content="Bunu bir daha sorma" />
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>

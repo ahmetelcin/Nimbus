@@ -14,6 +14,8 @@ internal static class AppPaths
 
     public static readonly string UploadHistoryFile = Path.Combine(DataDirectory, "uploads.json");
 
+    public static readonly string BackupDirectory = Path.Combine(DataDirectory, "backups");
+
     public static readonly string NotificationIconFile = Path.Combine(DataDirectory, "icon.png");
 
     public static readonly string ClientSecretFile = Path.Combine(AppContext.BaseDirectory, "client_secret.json");

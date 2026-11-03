@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net;
 using Google;
 using Google.Apis.Auth.OAuth2;
+using Google.Apis.Download;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Upload;
@@ -9,13 +10,14 @@ using DriveFile = Google.Apis.Drive.v3.Data.File;
 
 namespace Nimbus;
 
-internal sealed record UploadedFile(string Id, string WebViewLink);
+internal sealed record UploadedFile(string Id, string WebViewLink, long ModifiedUtcTicks);
 
 internal sealed class DriveUploader(UserCredential credential) : IDisposable
 {
     private const string FolderName = "Nimbus";
     private const string LegacyFolderName = "DriveAc";
     private const string FolderMimeType = "application/vnd.google-apps.folder";
+    private const string ExportSizeLimitReason = "exportSizeLimitExceeded";
     private const int ProgressChunkSize = ResumableUpload.MinimumChunkSize * 4;
 
     private readonly DriveService _service = new(new BaseClientService.Initializer
@@ -47,7 +49,7 @@ internal sealed class DriveUploader(UserCredential credential) : IDisposable
         };
 
         var request = _service.Files.Create(metadata, content, fileType.SourceMimeType);
-        request.Fields = "id,webViewLink";
+        request.Fields = "id,webViewLink,modifiedTime";
         request.ChunkSize = ProgressChunkSize;
 
         // Son parçanın yanıtı dönüştürme bitince gelir; bu yüzden o noktadan sonrası belirsiz gösterilir.
@@ -66,14 +68,37 @@ internal sealed class DriveUploader(UserCredential credential) : IDisposable
         if (request.ResponseBody is not { Id: { } id, WebViewLink: { } link })
             throw new UserMessageException("Dosya yüklendi ancak Drive bağlantı döndürmedi.");
 
-        return new UploadedFile(id, link);
+        return new UploadedFile(id, link, request.ResponseBody.ModifiedTimeDateTimeOffset?.UtcTicks ?? 0);
     }
 
     // Kopya silinmiş ya da çöp kutusundaysa null döner.
-    public async Task<string?> GetExistingLinkAsync(string fileId)
+    public async Task<GoogleState?> GetStateAsync(string fileId)
     {
-        var file = await GetFileOrNullAsync(fileId, "trashed,webViewLink");
-        return file is null || file.Trashed == true ? null : file.WebViewLink;
+        var file = await GetFileOrNullAsync(fileId, "trashed,webViewLink,createdTime,modifiedTime");
+        return file is null || file.Trashed == true
+            ? null
+            : new GoogleState(
+                file.WebViewLink,
+                file.CreatedTimeDateTimeOffset?.UtcTicks ?? 0,
+                file.ModifiedTimeDateTimeOffset?.UtcTicks ?? 0);
+    }
+
+    public async Task ExportToFileAsync(string fileId, string mimeType, string destination)
+    {
+        await using var output = File.Create(destination);
+        var progress = await _service.Files.Export(fileId, mimeType).DownloadAsync(output);
+        if (progress.Status == DownloadStatus.Completed)
+            return;
+
+        if (progress.Exception is GoogleApiException api
+            && api.Error?.Errors?.Any(e => e.Reason == ExportSizeLimitReason) == true)
+        {
+            output.SetLength(0);
+            await DownloadExportLinkAsync(fileId, mimeType, output);
+            return;
+        }
+
+        throw progress.Exception ?? new UserMessageException("Dosya Google'dan indirilemedi.");
     }
 
     public async Task<IReadOnlyList<string>> ListFilesOlderThanAsync(int days)
@@ -108,6 +133,21 @@ internal sealed class DriveUploader(UserCredential credential) : IDisposable
     }
 
     public void Dispose() => _service.Dispose();
+
+    // files.export 10 MB ile sınırlıdır; görselli sunumlar bunu kolayca aşar, dışa aktarma bağlantısı aşabilir.
+    private async Task DownloadExportLinkAsync(string fileId, string mimeType, Stream output)
+    {
+        var file = await GetFileOrNullAsync(fileId, "exportLinks");
+        string? link = null;
+        if (file?.ExportLinks?.TryGetValue(mimeType, out link) != true || link is null)
+            throw new UserMessageException("Dosya, Google'ın indirme sınırını aştığı için indirilemedi.");
+
+        using var response = await _service.HttpClient.GetAsync(link, HttpCompletionOption.ResponseHeadersRead);
+        if (!response.IsSuccessStatusCode)
+            throw new UserMessageException("Dosya, Google'ın indirme sınırını aştığı için indirilemedi.");
+
+        await response.Content.CopyToAsync(output);
+    }
 
     private static FileStream OpenForUpload(string path)
     {

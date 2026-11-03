@@ -5,7 +5,7 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Nimbus Ayarları"
     Width="580"
-    Height="420"
+    Height="630"
     Icon="Assets/Nimbus.ico"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -32,6 +32,30 @@
                     <ui:Button Click="OnChooseBrowserClick" Content="Seç…" />
                     <ui:Button x:Name="DefaultBrowserButton" Margin="8,0,0,0" Click="OnDefaultBrowserClick" Content="Varsayılan" />
                 </StackPanel>
+            </ui:CardControl>
+
+            <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon ArrowSync24}">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock FontTypography="BodyStrong" Text="Otomatik geri kaydet" />
+                        <ui:TextBlock Appearance="Secondary" Text="Son 24 saatte açılan belgelerdeki Google düzenlemelerini bilgisayara yazar." TextWrapping="Wrap" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:ToggleSwitch x:Name="AutoSaveSwitch" Click="OnAutoSaveClick" />
+            </ui:CardControl>
+
+            <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon DocumentSync24}">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock FontTypography="BodyStrong" Text="Google kopyası farklıysa" />
+                        <ui:TextBlock Appearance="Secondary" Text="Dosya yeniden açıldığında ne yapılsın?" TextWrapping="Wrap" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ComboBox x:Name="ReopenChoiceBox" Width="230" SelectionChanged="OnReopenChoiceChanged">
+                    <ComboBoxItem Content="Her seferinde sor" />
+                    <ComboBoxItem Content="Kaldığın yerden devam et" />
+                    <ComboBoxItem Content="Baştan başla" />
+                </ComboBox>
             </ui:CardControl>
 
             <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon Delete24}">

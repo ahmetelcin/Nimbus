@@ -2,6 +2,13 @@ using System.Text.Json;
 
 namespace Nimbus;
 
+internal enum ReopenChoice
+{
+    Ask,
+    Continue,
+    StartOver,
+}
+
 internal sealed class AppSettings
 {
     public string? DriveFolderId { get; set; }
@@ -11,6 +18,10 @@ internal sealed class AppSettings
     public string? BrowserPath { get; set; }
 
     public int CleanupDays { get; set; } = 30;
+
+    public bool AutoSaveBack { get; set; } = true;
+
+    public ReopenChoice ReopenChoice { get; set; } = ReopenChoice.Ask;
 
     public static AppSettings Load()
     {

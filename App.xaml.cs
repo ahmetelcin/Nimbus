@@ -15,9 +15,13 @@ public partial class App : Application
     private readonly Channel<WorkItem> _work = Channel.CreateUnbounded<WorkItem>();
     private readonly CancellationTokenSource _shutdown = new();
 
+    private const int RecentFileCount = 10;
+
     private Notifier _notifier = null!;
     private Session _session = null!;
     private FileOpener _opener = null!;
+    private SaveBack _saveBack = null!;
+    private AutoSync _autoSync = null!;
     private TrayIcon _tray = null!;
     private SignInWindow? _signInWindow;
     private SettingsWindow? _settingsWindow;
@@ -36,13 +40,18 @@ public partial class App : Application
         _notifier = new Notifier();
         _session = new Session(_notifier);
         _opener = new FileOpener(_session, _notifier);
+        _saveBack = new SaveBack(_session, _notifier);
+        // Bildirim düğmesi başka iş parçacığından gelir; iş kuyruğu UI iş parçacığına aittir.
+        _autoSync = new AutoSync(_session, _notifier, run => Dispatcher.InvokeAsync(() => Enqueue(run)).Task.Unwrap());
         _tray = new TrayIcon(new TrayActions(
             SignIn: () => _ = SignInAsync(),
             SignOut: () => _ = Enqueue(_session.SignOutAsync),
             LinkFileTypes: LinkFileTypes,
             CleanOldFiles: () => _ = Enqueue(CleanOldFilesAsync),
             OpenSettings: ShowSettingsWindow,
+            SaveToComputer: file => _ = Enqueue(() => _saveBack.SaveAsync(file)),
             Exit: ExitApp));
+        RefreshRecentFiles();
 
         FileAssociations.RefreshIfRegistered();
         AutoStart.RefreshIfEnabled();
@@ -58,6 +67,7 @@ public partial class App : Application
         _ = Enqueue(() => LoadSessionAsync(promptIfSignedOut: InitialPaths.Count == 0));
         foreach (var path in InitialPaths)
             _ = Enqueue(() => _opener.OpenAsync(path));
+        _ = _autoSync.RunAsync(_shutdown.Token);
     }
 
     private void OnMessage(string message)
@@ -193,8 +203,12 @@ public partial class App : Application
                 _notifier.ShowError(ErrorMessages.For(ex));
                 item.Done.SetResult(false);
             }
+
+            RefreshRecentFiles();
         }
     }
+
+    private void RefreshRecentFiles() => _tray.SetRecentFiles(UploadHistory.Recent(RecentFileCount));
 
     private void ExitApp()
     {

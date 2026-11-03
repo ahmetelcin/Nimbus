@@ -15,7 +15,7 @@ internal sealed class FileOpener(Session session, Notifier notifier)
 
         try
         {
-            string link;
+            string? link;
             try
             {
                 link = await GetLinkAsync(path, fileType);
@@ -29,7 +29,8 @@ internal sealed class FileOpener(Session session, Notifier notifier)
                 link = await GetLinkAsync(path, fileType);
             }
 
-            OpenInBrowser(link);
+            if (link is not null)
+                OpenInBrowser(link);
         }
         finally
         {
@@ -37,23 +38,62 @@ internal sealed class FileOpener(Session session, Notifier notifier)
         }
     }
 
-    private async Task<string> GetLinkAsync(string path, FileType fileType)
+    // Kullanıcı seçim penceresini kapatırsa null döner.
+    private async Task<string?> GetLinkAsync(string path, FileType fileType)
     {
         var credential = await session.GetCredentialAsync();
         using var uploader = new DriveUploader(credential);
 
-        if (UploadHistory.FindUnchangedCopy(path) is { } fileId
-            && await uploader.GetExistingLinkAsync(fileId) is { } existingLink)
+        if (UploadHistory.Find(path) is { } record && await uploader.GetStateAsync(record.FileId) is { } state)
         {
-            notifier.ShowInfo("Önceki kopya açılıyor", $"{Path.GetFileName(path)} değişmediği için yeniden yüklenmedi.");
-            return existingLink;
+            if (SyncRules.GoogleChanged(record, state))
+            {
+                var choice = await ChooseReopenAsync(Path.GetFileName(path));
+                if (choice is null)
+                    return null;
+
+                if (choice == ReopenChoice.Continue)
+                {
+                    UploadHistory.MarkOpened(path);
+                    return state.Link;
+                }
+            }
+            else if (UploadHistory.FindUnchangedCopy(path) is not null)
+            {
+                notifier.ShowInfo("Önceki kopya açılıyor", $"{Path.GetFileName(path)} değişmediği için yeniden yüklenmedi.");
+                UploadHistory.MarkOpened(path);
+                return state.Link;
+            }
         }
 
         var snapshot = UploadHistory.Capture(path);
         notifier.ShowProgress(Path.GetFileName(path));
         var uploaded = await uploader.UploadAndConvertAsync(path, fileType, notifier.UpdateProgress);
-        UploadHistory.Save(path, snapshot with { FileId = uploaded.Id });
+        UploadHistory.Save(path, snapshot with { FileId = uploaded.Id, SyncedGoogleTicks = uploaded.ModifiedUtcTicks });
         return uploaded.WebViewLink;
+    }
+
+    private static async Task<ReopenChoice?> ChooseReopenAsync(string fileName)
+    {
+        var saved = AppSettings.Load();
+        if (saved.ReopenChoice != ReopenChoice.Ask)
+            return saved.ReopenChoice;
+
+        var window = new ReopenWindow(fileName);
+        var closed = new TaskCompletionSource();
+        window.Closed += (_, _) => closed.SetResult();
+        window.Show();
+        window.Activate();
+        await closed.Task;
+
+        if (window.Choice is { } choice && window.DontAskAgain)
+        {
+            var settings = AppSettings.Load();
+            settings.ReopenChoice = choice;
+            settings.Save();
+        }
+
+        return window.Choice;
     }
 
     private static void OpenInBrowser(string link)

@@ -19,6 +19,8 @@ public partial class SettingsWindow : FluentWindow
         ShowBrowser(settings.BrowserPath);
         CleanupDaysBox.Value = settings.CleanupDays;
         AutoStartSwitch.IsChecked = AutoStart.IsEnabled;
+        AutoSaveSwitch.IsChecked = settings.AutoSaveBack;
+        ReopenChoiceBox.SelectedIndex = (int)settings.ReopenChoice;
     }
 
     private void ShowBrowser(string? path)
@@ -57,6 +59,20 @@ public partial class SettingsWindow : FluentWindow
 
     private void OnAutoStartClick(object sender, RoutedEventArgs e) =>
         AutoStart.SetEnabled(AutoStartSwitch.IsChecked == true);
+
+    private void OnAutoSaveClick(object sender, RoutedEventArgs e)
+    {
+        var settings = AppSettings.Load();
+        settings.AutoSaveBack = AutoSaveSwitch.IsChecked == true;
+        settings.Save();
+    }
+
+    private void OnReopenChoiceChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        var settings = AppSettings.Load();
+        settings.ReopenChoice = (ReopenChoice)ReopenChoiceBox.SelectedIndex;
+        settings.Save();
+    }
 
     private void OnLinkFileTypesClick(object sender, RoutedEventArgs e) => _linkFileTypes();
 

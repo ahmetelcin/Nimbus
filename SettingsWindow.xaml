@@ -20,7 +20,8 @@
 
         <ui:TitleBar Title="Nimbus Ayarları" ShowMaximize="False" ShowMinimize="False" />
 
-        <StackPanel Grid.Row="1" Margin="24,8,24,24">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,8,24,24">
             <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon Globe24}">
                 <ui:CardControl.Header>
                     <StackPanel>
@@ -85,7 +86,7 @@
                 <ui:ToggleSwitch x:Name="AutoStartSwitch" Click="OnAutoStartClick" />
             </ui:CardControl>
 
-            <ui:CardControl Icon="{ui:SymbolIcon Document24}">
+            <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon Document24}">
                 <ui:CardControl.Header>
                     <StackPanel>
                         <ui:TextBlock FontTypography="BodyStrong" Text="Dosya türleri" />
@@ -97,6 +98,17 @@
                     <ui:Button Margin="8,0,0,0" Click="OnUnlinkFileTypesClick" Content="Bağlantıyı kaldır" />
                 </StackPanel>
             </ui:CardControl>
+
+            <ui:CardControl Icon="{ui:SymbolIcon CursorClick24}">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock FontTypography="BodyStrong" Text="Sağ tık menüsü" />
+                        <ui:TextBlock Appearance="Secondary" Text="Explorer menüsüne &quot;Nimbus ile aç&quot; ekler." TextWrapping="Wrap" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:ToggleSwitch x:Name="ExplorerMenuSwitch" Click="OnExplorerMenuClick" />
+            </ui:CardControl>
         </StackPanel>
+        </ScrollViewer>
     </Grid>
 </ui:FluentWindow>

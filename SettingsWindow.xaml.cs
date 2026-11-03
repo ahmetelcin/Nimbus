@@ -21,6 +21,7 @@ public partial class SettingsWindow : FluentWindow
         AutoStartSwitch.IsChecked = AutoStart.IsEnabled;
         AutoSaveSwitch.IsChecked = settings.AutoSaveBack;
         ReopenChoiceBox.SelectedIndex = (int)settings.ReopenChoice;
+        ExplorerMenuSwitch.IsChecked = settings.ExplorerMenu;
     }
 
     private void ShowBrowser(string? path)
@@ -72,6 +73,15 @@ public partial class SettingsWindow : FluentWindow
         var settings = AppSettings.Load();
         settings.ReopenChoice = (ReopenChoice)ReopenChoiceBox.SelectedIndex;
         settings.Save();
+    }
+
+    private void OnExplorerMenuClick(object sender, RoutedEventArgs e)
+    {
+        var enabled = ExplorerMenuSwitch.IsChecked == true;
+        var settings = AppSettings.Load();
+        settings.ExplorerMenu = enabled;
+        settings.Save();
+        ExplorerMenu.SetEnabled(enabled);
     }
 
     private void OnLinkFileTypesClick(object sender, RoutedEventArgs e) => _linkFileTypes();

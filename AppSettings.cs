@@ -23,6 +23,8 @@ internal sealed class AppSettings
 
     public ReopenChoice ReopenChoice { get; set; } = ReopenChoice.Ask;
 
+    public bool ExplorerMenu { get; set; } = true;
+
     public static AppSettings Load()
     {
         try

@@ -67,7 +67,7 @@ Close Nimbus from the tray menu before you replace the exe. If you move it, its 
 
 ## Uninstall
 
-1. Open **Ayarlar…** from the tray menu. Under **Dosya türleri**, select **Bağlantıyı kaldır**, then turn off **Windows ile başlat**.
+1. Open **Ayarlar…** from the tray menu. Under **Dosya türleri**, select **Bağlantıyı kaldır**, then turn off **Windows ile başlat** and **Sağ tık menüsü**.
 2. Select **Hesaptan çıkış yap** to remove Nimbus's access to your account, then select **Nimbus'u kapat**.
 3. Delete `%LOCALAPPDATA%\Programs\Nimbus` and `%APPDATA%\Nimbus`.
 
@@ -75,7 +75,10 @@ Files that Nimbus uploaded stay in the `Nimbus` folder in your Drive until you d
 
 ## Publish a release
 
-Always name the release zip `Nimbus-win-x64.zip`, with `Nimbus.exe` and `client_secret.json` at its top level. The website's download button links to `/releases/latest/download/Nimbus-win-x64.zip`, so a different name breaks it.
+Every release needs these two files:
+
+- `Nimbus-win-x64.zip`, with `Nimbus.exe` and `client_secret.json` at its top level. The website's download button links to `/releases/latest/download/Nimbus-win-x64.zip`, so a different name breaks it.
+- `Nimbus.exe.sha256`, with the SHA-256 hash of that `Nimbus.exe`. Nimbus checks this hash before it installs an update, and won't install the update if the file is missing or the hash doesn't match.
 
 ## License
 

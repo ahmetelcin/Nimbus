@@ -55,6 +55,7 @@ public partial class App : Application
 
         FileAssociations.RefreshIfRegistered();
         AutoStart.RefreshIfEnabled();
+        ExplorerMenu.Refresh();
 
         _session.Changed += OnSessionChanged;
         _notifier.StatusChanged += status => Dispatcher.InvokeAsync(() => _tray.SetStatus(status));

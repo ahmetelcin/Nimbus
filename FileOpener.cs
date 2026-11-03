@@ -8,10 +8,10 @@ internal sealed class FileOpener(Session session, Notifier notifier)
     public async Task OpenAsync(string path)
     {
         var fileType = FileTypes.Find(path)
-            ?? throw new UserMessageException($"Desteklenmeyen dosya türü: {Path.GetExtension(path)}");
+            ?? throw new UserMessageException(string.Format(Strings.UnsupportedFileType, Path.GetExtension(path)));
 
         if (!File.Exists(path))
-            throw new UserMessageException($"Dosya bulunamadı: {Path.GetFileName(path)}");
+            throw new UserMessageException(string.Format(Strings.FileNotFound, Path.GetFileName(path)));
 
         try
         {
@@ -25,7 +25,7 @@ internal sealed class FileOpener(Session session, Notifier notifier)
                 // Testing modunda refresh token haftada bir geçersiz olur; yeniden giriş normal akıştır.
                 notifier.ClearProgress();
                 await session.ExpireAsync();
-                notifier.ShowInfo("Oturumunuz sona erdi", "Devam etmek için yeniden giriş yapın.");
+                notifier.ShowInfo(Strings.SessionExpiredTitle, Strings.SessionExpiredBody);
                 link = await GetLinkAsync(path, fileType);
             }
 
@@ -60,7 +60,7 @@ internal sealed class FileOpener(Session session, Notifier notifier)
             }
             else if (UploadHistory.FindUnchangedCopy(path) is not null)
             {
-                notifier.ShowOptional(OptionalNotification.Opened, "Önceki kopya açılıyor", $"{Path.GetFileName(path)} değişmediği için yeniden yüklenmedi.");
+                notifier.ShowOptional(OptionalNotification.Opened, Strings.OpenedPreviousTitle, string.Format(Strings.OpenedPreviousBody, Path.GetFileName(path)));
                 UploadHistory.MarkOpened(path);
                 return state.Link;
             }
@@ -96,6 +96,8 @@ internal sealed class FileOpener(Session session, Notifier notifier)
         return window.Choice;
     }
 
+    internal static event Action? DocumentOpened;
+
     internal static void OpenInBrowser(string link)
     {
         if (AppSettings.Load().BrowserPath is { } browser && File.Exists(browser))
@@ -108,5 +110,7 @@ internal sealed class FileOpener(Session session, Notifier notifier)
         {
             Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
         }
+
+        DocumentOpened?.Invoke();
     }
 }

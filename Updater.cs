@@ -2,6 +2,14 @@ using System.Net;
 
 namespace Nimbus;
 
+internal enum UpdateChoice
+{
+    Now,
+    Always,
+}
+
+internal sealed record UpdateRow(string Version, bool Installing);
+
 // Yeni sürümü denetler, doğrular ve iş kuyruğu boşken kurar.
 internal sealed class Updater(
     Notifier notifier,
@@ -25,11 +33,93 @@ internal sealed class Updater(
     private readonly string _exe = Environment.ProcessPath!;
     private int _installing;
     private bool _readyToApply;
+    private bool _userInstall;
+    private string _userInstallVersion = "";
+
+    // Başka bir iş parçacığından gelebilir.
+    public event Action? StateChanged;
+
+    // Bildirime tıklanınca gelir; başka bir iş parçacığından olabilir.
+    public event Action? PromptRequested;
+
+    // Tepsi menüsünün en üstündeki satır; gösterilecek bir şey yoksa null.
+    public UpdateRow? Row
+    {
+        get
+        {
+            if (IsUserInstalling)
+                return new UpdateRow(_userInstallVersion, Installing: true);
+
+            var settings = AppSettings.Load();
+            return settings.UpdateMode == UpdateMode.Ask && StoredUpdate(settings) is { } update
+                ? new UpdateRow(update.Version.ToString(), Installing: false)
+                : null;
+        }
+    }
+
+    public bool IsPromptDue
+    {
+        get
+        {
+            if (Row is not { Installing: false } row)
+                return false;
+
+            var settings = AppSettings.Load();
+            return UpdatePrompt.IsDue(row.Version, settings.UpdateSnoozedVersion, settings.UpdateSnoozedUtcTicks, DateTime.UtcNow.Ticks);
+        }
+    }
+
+    private bool IsUserInstalling => _userInstall && (_readyToApply || Volatile.Read(ref _installing) == 1);
+
+    public void Accept(UpdateChoice choice)
+    {
+        var settings = AppSettings.Load();
+        if (_readyToApply || StoredUpdate(settings) is not { } update)
+            return;
+
+        if (choice == UpdateChoice.Always)
+        {
+            settings.UpdateMode = UpdateMode.Automatic;
+            settings.Save();
+        }
+
+        notifier.DismissUpdateAvailable();
+        _userInstallVersion = update.Version.ToString();
+        _userInstall = true;
+        var install = InstallAsync(update.Tag, update.Version, reportNetworkErrors: true);
+        StateChanged?.Invoke();
+        _ = install;
+    }
+
+    public void Snooze()
+    {
+        var settings = AppSettings.Load();
+        if (StoredUpdate(settings) is not { } update)
+            return;
+
+        settings.UpdateSnoozedVersion = update.Version.ToString();
+        settings.UpdateSnoozedUtcTicks = DateTime.UtcNow.Ticks;
+        settings.Save();
+        notifier.DismissUpdateAvailable();
+    }
+
+    // Ayarlardan otomatiğe geçilince bekleyen sürüm 24 saatlik denetimi beklemeden kurulur.
+    public void OnModeChanged()
+    {
+        var settings = AppSettings.Load();
+        if (settings.UpdateMode == UpdateMode.Automatic && StoredUpdate(settings) is { } update)
+            _ = InstallAsync(update.Tag, update.Version, reportNetworkErrors: true);
+
+        StateChanged?.Invoke();
+    }
 
     public async Task RunAsync(CancellationToken cancellation)
     {
         if (!UpdateInstaller.CanSelfUpdate)
             return;
+
+        // Önceki oturumda bulunan sürüm için satır hemen görünür.
+        StateChanged?.Invoke();
 
         try
         {
@@ -87,7 +177,15 @@ internal sealed class Updater(
         settings.LastUpdateCheckUtcTicks = DateTime.UtcNow.Ticks;
         settings.Save();
 
-        if (UpdateInstaller.ParseLatest(json) is not { } latest || !UpdateInstaller.IsNewer(latest.Version, UpdateInstaller.CurrentVersion))
+        if (UpdateInstaller.ParseLatest(json) is not { } latest)
+            return;
+
+        // Sürüm geri çekildiyse bekleyen kayıt ve tepsi satırı da kalkar.
+        var isNewer = UpdateInstaller.IsNewer(latest.Version, UpdateInstaller.CurrentVersion);
+        settings.AvailableUpdateTag = isNewer ? latest.Tag : null;
+        settings.Save();
+        StateChanged?.Invoke();
+        if (!isNewer)
             return;
 
         if (settings.UpdateMode == UpdateMode.Automatic)
@@ -96,18 +194,18 @@ internal sealed class Updater(
             return;
         }
 
-        notifier.ShowUpdateAvailable(latest.Version.ToString(), choice =>
-        {
-            if (choice == UpdateChoice.Always)
-            {
-                var current = AppSettings.Load();
-                current.UpdateMode = UpdateMode.Automatic;
-                current.Save();
-            }
-
-            _ = InstallAsync(latest.Tag, latest.Version, reportNetworkErrors: true);
-        });
+        var version = latest.Version.ToString();
+        if (UpdatePrompt.IsDue(version, settings.UpdateSnoozedVersion, settings.UpdateSnoozedUtcTicks, DateTime.UtcNow.Ticks))
+            notifier.ShowUpdateAvailable(version, () => PromptRequested?.Invoke());
     }
+
+    // Geliştirme derlemesi kendini güncelleyemez ama ayar dosyasını paylaşır.
+    private static (string Tag, Version Version)? StoredUpdate(AppSettings settings) =>
+        UpdateInstaller.CanSelfUpdate
+        && UpdateInstaller.ParseTag(settings.AvailableUpdateTag) is { } update
+        && UpdateInstaller.IsNewer(update.Version, UpdateInstaller.CurrentVersion)
+            ? update
+            : null;
 
     private async Task InstallAsync(string tag, Version version, bool reportNetworkErrors)
     {
@@ -138,17 +236,20 @@ internal sealed class Updater(
         {
             LocalFiles.TryDelete(newExe);
             if (reportNetworkErrors)
-                notifier.ShowError("Güncelleme indirilemedi. İnternet bağlantınızı kontrol edin.");
+                notifier.ShowError(Strings.UpdateDownloadFailed);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             LocalFiles.TryDelete(newExe);
-            notifier.ShowError("Güncelleme dosyaları yazılamadığı için güncelleme kurulmadı.");
+            notifier.ShowError(Strings.UpdateWriteFailed);
         }
         finally
         {
             LocalFiles.TryDelete(zip);
             Interlocked.Exchange(ref _installing, 0);
+            // Kurulum başarısızsa satır yeniden tıklanabilir olur.
+            _userInstall &= _readyToApply;
+            StateChanged?.Invoke();
         }
     }
 
@@ -159,7 +260,17 @@ internal sealed class Updater(
             return Task.CompletedTask;
 
         _readyToApply = false;
-        UpdateInstaller.Swap(_exe, UpdateInstaller.NewPath(_exe));
+        try
+        {
+            UpdateInstaller.Swap(_exe, UpdateInstaller.NewPath(_exe));
+        }
+        catch
+        {
+            _userInstall = false;
+            StateChanged?.Invoke();
+            throw;
+        }
+
         restart(_exe);
         return Task.CompletedTask;
     }
@@ -182,7 +293,7 @@ internal sealed class Updater(
     private static void EnsureAssetExists(HttpResponseMessage response, string name)
     {
         if (response.StatusCode == HttpStatusCode.NotFound)
-            throw new UserMessageException($"Yeni sürümde {name} bulunmuyor; güncelleme kurulmadı.");
+            throw new UserMessageException(string.Format(Strings.UpdateAssetMissing, name));
         response.EnsureSuccessStatusCode();
     }
 

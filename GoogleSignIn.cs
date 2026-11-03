@@ -29,11 +29,11 @@ internal static class GoogleSignIn
         }
         catch (OperationCanceledException)
         {
-            throw new UserMessageException("Google girişi 5 dakika içinde tamamlanmadı. Yeniden deneyin.");
+            throw new UserMessageException(Strings.SignInTimeoutError);
         }
         catch (TokenResponseException)
         {
-            throw new UserMessageException("Google girişi tamamlanamadı veya izin verilmedi.");
+            throw new UserMessageException(Strings.SignInDeniedError);
         }
     }
 
@@ -94,7 +94,7 @@ internal static class GoogleSignIn
     private static ClientSecrets LoadClientSecrets()
     {
         if (!File.Exists(AppPaths.ClientSecretFile))
-            throw new UserMessageException("client_secret.json bulunamadı. Dosya, Nimbus.exe ile aynı klasörde olmalı.");
+            throw new UserMessageException(Strings.SecretMissing);
 
         ClientSecrets? secrets = null;
         try
@@ -110,7 +110,7 @@ internal static class GoogleSignIn
             || string.IsNullOrWhiteSpace(secrets.ClientSecret)
             || secrets.ClientId.StartsWith("BURAYA", StringComparison.Ordinal))
         {
-            throw new UserMessageException("client_secret.json geçersiz. Dosyayı şablona göre doldurun.");
+            throw new UserMessageException(Strings.SecretInvalid);
         }
 
         return secrets;

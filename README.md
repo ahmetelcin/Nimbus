@@ -18,10 +18,10 @@ You need Windows 10 version 2004 or later and a Google account. No other softwar
 
 1. Download the latest version from [Releases](https://github.com/ahmetelcin/Nimbus/releases).
 2. Extract `Nimbus.exe` and `client_secret.json` into the same folder, for example `%LOCALAPPDATA%\Programs\Nimbus`.
-3. Run `Nimbus.exe` and select **Google ile giriş yap** (sign in with Google).
-4. In the tray menu, select **Dosya türlerini bağla…**, then set Nimbus as the default app for each file type you want. Windows doesn't let apps make this choice for you.
+3. Run `Nimbus.exe` and select **Sign in with Google**.
+4. In the tray menu, select **Link file types…**, then set Nimbus as the default app for each file type you want. Windows doesn't let apps make this choice for you.
 
-The app's interface is currently in Turkish.
+Nimbus is available in English and Turkish. It uses Turkish if that's your Windows language, and English otherwise. You can change this in **Settings…**.
 
 ### "Windows protected your PC"
 
@@ -67,10 +67,12 @@ Close Nimbus from the tray menu before you replace the exe. If you move it, its 
 
 While you're developing, run `pwsh -File dev.ps1`. It closes every running copy of Nimbus, builds the project and starts the new build. Add `-NoStart` to only build.
 
+Interface text is in `Strings.resx` (English) and `Strings.tr.resx` (Turkish). After you add or remove a string in both files, run `pwsh -File tools\gen-strings.ps1`.
+
 ## Uninstall
 
-1. Open **Ayarlar…** from the tray menu. Under **Dosya türleri**, select **Bağlantıyı kaldır**, then turn off **Windows ile başlat** and **Sağ tık menüsü**.
-2. Select **Hesaptan çıkış yap** to remove Nimbus's access to your account, then select **Nimbus'u kapat**.
+1. Open **Settings…** from the tray menu. Under **File types**, select **Remove link**, then turn off **Start with Windows** and **Right-click menu**.
+2. Select **Sign out** to remove Nimbus's access to your account, then select **Close Nimbus**.
 3. Delete `%LOCALAPPDATA%\Programs\Nimbus` and `%APPDATA%\Nimbus`.
 
 Files that Nimbus uploaded stay in the `Nimbus` folder in your Drive until you delete them.
@@ -89,7 +91,7 @@ Nimbus won't install an update if either file is missing, or if the hash or sign
 dotnet run --project tools\NimbusSign -- sign publish\Nimbus.exe
 ```
 
-The private key is in `%USERPROFILE%\.nimbus\update-signing.key`. It must stay outside this repository. Create it once with `dotnet run --project tools\NimbusSign -- keygen --source UpdateKey.cs`, which also writes the public key into `UpdateKey.cs`. Back it up, because installed copies can't update themselves without it.
+The private key is in `%USERPROFILE%\.nimbus\update-signing.key`, encrypted with a passphrase (Argon2id and AES-256-GCM). It must stay outside this repository. Create it once with `dotnet run --project tools\NimbusSign -- keygen --source UpdateKey.cs`, which also writes the public key into `UpdateKey.cs`. Both commands ask for the passphrase without showing it, so run them in your own terminal window. Back up the key file and remember the passphrase, because installed copies can't update themselves without them.
 
 ## License
 

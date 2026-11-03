@@ -67,7 +67,7 @@ internal sealed class DriveUploader(UserCredential credential) : IDisposable
             throw progress.Exception;
 
         if (request.ResponseBody is not { Id: { } id, WebViewLink: { } link })
-            throw new UserMessageException("Dosya yüklendi ancak Drive bağlantı döndürmedi.");
+            throw new UserMessageException(Strings.DriveNoLink);
 
         return new UploadedFile(id, link, request.ResponseBody.ModifiedTimeDateTimeOffset?.UtcTicks ?? 0);
     }
@@ -119,7 +119,7 @@ internal sealed class DriveUploader(UserCredential credential) : IDisposable
             return;
         }
 
-        throw progress.Exception ?? new UserMessageException("Dosya Google'dan indirilemedi.");
+        throw progress.Exception ?? new UserMessageException(Strings.ExportFailed);
     }
 
     public async Task<IReadOnlyList<string>> ListFilesOlderThanAsync(int days)
@@ -161,11 +161,11 @@ internal sealed class DriveUploader(UserCredential credential) : IDisposable
         var file = await GetFileOrNullAsync(fileId, "exportLinks");
         string? link = null;
         if (file?.ExportLinks?.TryGetValue(mimeType, out link) != true || link is null)
-            throw new UserMessageException("Dosya, Google'ın indirme sınırını aştığı için indirilemedi.");
+            throw new UserMessageException(Strings.ExportOverLimit);
 
         using var response = await _service.HttpClient.GetAsync(link, HttpCompletionOption.ResponseHeadersRead);
         if (!response.IsSuccessStatusCode)
-            throw new UserMessageException("Dosya, Google'ın indirme sınırını aştığı için indirilemedi.");
+            throw new UserMessageException(Strings.ExportOverLimit);
 
         await response.Content.CopyToAsync(output);
     }
@@ -179,15 +179,15 @@ internal sealed class DriveUploader(UserCredential credential) : IDisposable
         }
         catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
         {
-            throw new UserMessageException($"Dosya bulunamadı: {name}");
+            throw new UserMessageException(string.Format(Strings.FileNotFound, name));
         }
         catch (UnauthorizedAccessException)
         {
-            throw new UserMessageException($"Dosyayı okuma izni yok: {name}");
+            throw new UserMessageException(string.Format(Strings.FileNoReadPermission, name));
         }
         catch (IOException)
         {
-            throw new UserMessageException($"Dosya başka bir program tarafından kilitli: {name}");
+            throw new UserMessageException(string.Format(Strings.FileLocked, name));
         }
     }
 

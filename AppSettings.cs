@@ -47,6 +47,16 @@ internal sealed class AppSettings
 
     public long LastUpdateCheckUtcTicks { get; set; }
 
+    // Son denetimde bulunan sürüm; tepsi satırı yeniden başlatınca da kalır.
+    public string? AvailableUpdateTag { get; set; }
+
+    public string? UpdateSnoozedVersion { get; set; }
+
+    public long UpdateSnoozedUtcTicks { get; set; }
+
+    // null: Windows diline göre seçilir.
+    public string? Language { get; set; }
+
     public static AppSettings Load()
     {
         try

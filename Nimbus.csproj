@@ -15,6 +15,9 @@
     <SelfContained>true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <!-- Paketlerin diğer dillerdeki kaynakları exe'ye girmesin. -->
+    <SatelliteResourceLanguages>en;tr</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>

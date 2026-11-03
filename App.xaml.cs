@@ -17,6 +17,9 @@ public partial class App : Application
 
     private const int RecentFileCount = 10;
 
+    // Tarayıcı öne gelip belgeyi göstermeye başlasın; tam ekran denetimi de ona göre yapılsın.
+    private static readonly TimeSpan UpdatePromptDelay = TimeSpan.FromSeconds(3);
+
     private Notifier _notifier = null!;
     private Session _session = null!;
     private FileOpener _opener = null!;
@@ -28,6 +31,8 @@ public partial class App : Application
     private TrayIcon _tray = null!;
     private SignInWindow? _signInWindow;
     private SettingsWindow? _settingsWindow;
+    private UpdateWindow? _updateWindow;
+    private bool _updatePromptWaiting;
 
     internal IReadOnlyList<string> InitialPaths { get; init; } = [];
 
@@ -55,6 +60,7 @@ public partial class App : Application
             LinkFileTypes: LinkFileTypes,
             CleanOldFiles: () => _ = Enqueue(CleanOldFilesAsync),
             OpenSettings: ShowSettingsWindow,
+            ShowUpdate: ShowUpdateWindow,
             OpenRecent: file => _ = Enqueue(() => _recent.OpenAsync(file)),
             SaveToComputer: file => _ = Enqueue(() => _saveBack.SaveAsync(file)),
             CopyPrivateLink: file => _ = Enqueue(() => _recent.CopyPrivateLinkAsync(file)),
@@ -74,6 +80,9 @@ public partial class App : Application
 
         _session.Changed += OnSessionChanged;
         _notifier.StatusChanged += status => Dispatcher.InvokeAsync(() => _tray.SetStatus(status));
+        _updater.StateChanged += () => Dispatcher.InvokeAsync(OnUpdateStateChanged);
+        _updater.PromptRequested += () => Dispatcher.InvokeAsync(ShowUpdateWindow);
+        FileOpener.DocumentOpened += () => _ = PromptForUpdateAsync();
 
         _ = RunWorkAsync();
         _ = Instance.ListenAsync(
@@ -86,7 +95,7 @@ public partial class App : Application
         _ = _autoSync.RunAsync(_shutdown.Token);
 
         if (File.Exists(UpdateInstaller.OldPath(Environment.ProcessPath!)))
-            _notifier.ShowInfo("Nimbus güncellendi", $"Şu anki sürüm: {UpdateInstaller.CurrentVersion}");
+            _notifier.ShowInfo(Strings.UpdateDoneTitle, string.Format(Strings.UpdateDoneBody, UpdateInstaller.CurrentVersion));
         _ = UpdateInstaller.DeleteOldAsync(Environment.ProcessPath!);
         _ = _updater.RunAsync(_shutdown.Token);
     }
@@ -96,7 +105,7 @@ public partial class App : Application
         if (message.Length > 0)
             _ = Enqueue(() => _opener.OpenAsync(message));
         else if (_session.IsSignedIn)
-            _notifier.ShowInfo("Nimbus çalışıyor", "Menüye sistem tepsisindeki simgeden ulaşabilirsiniz.");
+            _notifier.ShowInfo(Strings.RunningTitle, Strings.RunningBody);
         else
             ShowSignInWindow();
     }
@@ -110,7 +119,7 @@ public partial class App : Application
         catch (TokenResponseException)
         {
             await _session.ExpireAsync();
-            _notifier.ShowInfo("Oturumunuz sona erdi", "Devam etmek için yeniden giriş yapın.");
+            _notifier.ShowInfo(Strings.SessionExpiredTitle, Strings.SessionExpiredBody);
         }
 
         if (promptIfSignedOut && !_session.IsSignedIn)
@@ -135,7 +144,7 @@ public partial class App : Application
     {
         if (_settingsWindow is null)
         {
-            _settingsWindow = new SettingsWindow(LinkFileTypes, UnlinkFileTypes);
+            _settingsWindow = new SettingsWindow(LinkFileTypes, UnlinkFileTypes, OnLanguageChanged, _updater.OnModeChanged);
             _settingsWindow.Closed += (_, _) => _settingsWindow = null;
             _settingsWindow.Show();
         }
@@ -143,18 +152,92 @@ public partial class App : Application
         _settingsWindow.Activate();
     }
 
+    private void OnUpdateStateChanged()
+    {
+        var row = _updater.Row;
+        _tray.SetUpdate(row);
+        // Kurulum başladıysa ya da mod değiştiyse artık sorulacak bir şey yoktur.
+        if (row is not { Installing: false })
+            _updateWindow?.Withdraw();
+    }
+
+    // Tepsiden ya da bildirimden istendiğinde tam ekran ve "Sonra" sınırı uygulanmaz.
+    private void ShowUpdateWindow()
+    {
+        if (CreateUpdateWindow() is { } window)
+            window.Show();
+
+        _updateWindow?.BringForward();
+    }
+
+    // Belge açılışını geciktirmesin ve kuyruğu tutmasın diye iş kuyruğunun dışındadır.
+    private async Task PromptForUpdateAsync()
+    {
+        if (_updatePromptWaiting || !_updater.IsPromptDue)
+            return;
+
+        _updatePromptWaiting = true;
+        try
+        {
+            await Task.Delay(UpdatePromptDelay, _shutdown.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        finally
+        {
+            _updatePromptWaiting = false;
+        }
+
+        // Tam ekrandaysa ertelenmiş sayılmaz; bir sonraki dosyada yeniden denenir.
+        if (_updater.IsPromptDue && !FullScreen.IsActive())
+            CreateUpdateWindow()?.ShowQuietly();
+    }
+
+    // Pencere zaten açıksa ya da gösterilecek sürüm yoksa null döner.
+    private UpdateWindow? CreateUpdateWindow()
+    {
+        if (_updateWindow is not null || _updater.Row is not { Installing: false } row)
+            return null;
+
+        var window = new UpdateWindow(row.Version, UpdateInstaller.CurrentVersion.ToString());
+        window.Closed += (_, _) =>
+        {
+            _updateWindow = null;
+            if (window.Choice is { } choice)
+                _updater.Accept(choice);
+            else if (window.IsPostponed)
+                _updater.Snooze();
+        };
+        _updateWindow = window;
+        return window;
+    }
+
+    // Menü, Explorer kayıtları ve Ayarlar penceresi metinlerini kurulurken aldığı için yeniden kurulur.
+    private void OnLanguageChanged()
+    {
+        Localization.Apply();
+        _tray.RebuildMenu();
+        ExplorerMenu.Refresh();
+        FileAssociations.RefreshIfRegistered();
+        _updateWindow?.Withdraw();
+        _settingsWindow?.Close();
+        Dispatcher.BeginInvoke(ShowSettingsWindow);
+    }
+
     // Windows, varsayılan uygulamanın programla seçilmesine izin vermez; kullanıcı Ayarlar'dan seçer.
     private void LinkFileTypes()
     {
         FileAssociations.Register();
         Process.Start(new ProcessStartInfo(FileAssociations.SettingsUri) { UseShellExecute = true });
-        _notifier.ShowInfo("Dosya türleri kaydedildi", "Açılan sayfada her uzantı için Nimbus'u varsayılan yapın.");
+        _notifier.ShowInfo(Strings.FileTypesSavedTitle, Strings.FileTypesSavedBody);
     }
 
     private void UnlinkFileTypes()
     {
         FileAssociations.Unregister();
-        _notifier.ShowInfo("Dosya türü bağlantıları kaldırıldı", "Nimbus artık Varsayılan uygulamalar listesinde görünmez.");
+        _notifier.ShowInfo(Strings.FileTypesRemovedTitle, Strings.FileTypesRemovedBody);
     }
 
     private async Task CleanOldFilesAsync()
@@ -166,22 +249,22 @@ public partial class App : Application
         var fileIds = await uploader.ListFilesOlderThanAsync(days);
         if (fileIds.Count == 0)
         {
-            _notifier.ShowInfo("Temizlenecek dosya yok", $"Nimbus klasöründe {days} günden eski dosya bulunmuyor.");
+            _notifier.ShowInfo(Strings.CleanNothingTitle, string.Format(Strings.CleanNothingBody, days));
             return;
         }
 
         var confirm = new Wpf.Ui.Controls.MessageBox
         {
-            Title = "Eski dosyaları temizle",
-            Content = $"Nimbus klasöründe {days} gündür değişmeyen {fileIds.Count} dosya çöp kutusuna taşınacak.",
-            PrimaryButtonText = "Çöp kutusuna taşı",
-            CloseButtonText = "Vazgeç",
+            Title = Strings.CleanPromptTitle,
+            Content = string.Format(Strings.CleanPromptBody, days, fileIds.Count),
+            PrimaryButtonText = Strings.CleanPrimary,
+            CloseButtonText = Strings.Cancel,
         };
         if (await confirm.ShowDialogAsync() != Wpf.Ui.Controls.MessageBoxResult.Primary)
             return;
 
         await uploader.MoveToTrashAsync(fileIds);
-        _notifier.ShowInfo("Temizlik tamamlandı", $"{fileIds.Count} dosya çöp kutusuna taşındı.");
+        _notifier.ShowInfo(Strings.CleanDoneTitle, string.Format(Strings.CleanDoneBody, fileIds.Count));
     }
 
     private void OnSessionChanged()
@@ -217,7 +300,7 @@ public partial class App : Application
             catch (TokenResponseException)
             {
                 await _session.ExpireAsync();
-                _notifier.ShowError("Oturumunuz sona erdi. Yeniden giriş yapıp tekrar deneyin.");
+                _notifier.ShowError(Strings.SessionExpiredError);
                 item.Done.SetResult(false);
             }
             catch (Exception ex)
@@ -260,6 +343,8 @@ public partial class App : Application
     private void ReleaseResources()
     {
         _shutdown.Cancel();
+        // Uygulama kapanırken pencerenin kapanması "Sonra" sayılmamalı.
+        _updateWindow?.Withdraw();
         SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
         _notifier.ClearProgress();
         _tray.Dispose();

@@ -24,11 +24,11 @@ internal static class LocalFiles
         }
         catch (UnauthorizedAccessException)
         {
-            throw new UserMessageException($"{name} dosyasına yazma izni yok. Dosya salt okunur olabilir.");
+            throw new UserMessageException(string.Format(Strings.FileNoWritePermission, name));
         }
         catch (IOException)
         {
-            throw new UserMessageException($"{name} başka bir programda açık. Dosyayı kapatıp yeniden deneyin.");
+            throw new UserMessageException(string.Format(Strings.FileOpenElsewhere, name));
         }
     }
 
@@ -43,7 +43,7 @@ internal static class LocalFiles
             _ => stream.ReadByte() == 'P' && stream.ReadByte() == 'K', // Office ve OpenDocument biçimleri zip tabanlıdır.
         };
         if (!isValid)
-            throw new UserMessageException($"{name} Google'dan eksik indirildi. Dosyaya dokunulmadı; yeniden deneyin.");
+            throw new UserMessageException(string.Format(Strings.DownloadIncomplete, name));
     }
 
     // Otomatik kayıt birkaç dakikada bir çalışır; her turda yedeklense 5 yedek özgün dosyayı hızla siler.
@@ -64,7 +64,7 @@ internal static class LocalFiles
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            throw new UserMessageException($"{Path.GetFileName(path)} yedeklenemediği için dosyaya dokunulmadı.");
+            throw new UserMessageException(string.Format(Strings.BackupFailed, Path.GetFileName(path)));
         }
 
         PruneBackups(folder);
@@ -84,11 +84,11 @@ internal static class LocalFiles
         }
         catch (UnauthorizedAccessException)
         {
-            throw new UserMessageException($"{Path.GetFileName(target)} kaydedilemedi: bu konuma yazma izni yok.");
+            throw new UserMessageException(string.Format(Strings.SaveNoPermission, Path.GetFileName(target)));
         }
         catch (IOException)
         {
-            throw new UserMessageException($"{Path.GetFileName(target)} kaydedilemedi. Dosya başka bir programda açık ya da disk dolu olabilir.");
+            throw new UserMessageException(string.Format(Strings.SaveFailed, Path.GetFileName(target)));
         }
         finally
         {
@@ -102,9 +102,9 @@ internal static class LocalFiles
         var name = Path.GetFileNameWithoutExtension(target);
         var extension = Path.GetExtension(target);
 
-        var candidate = Path.Combine(folder, $"{name} (Nimbus kopyası){extension}");
+        var candidate = Path.Combine(folder, $"{name} ({Strings.CopySuffix}){extension}");
         for (var i = 2; File.Exists(candidate); i++)
-            candidate = Path.Combine(folder, $"{name} (Nimbus kopyası {i}){extension}");
+            candidate = Path.Combine(folder, $"{name} ({Strings.CopySuffix} {i}){extension}");
         return candidate;
     }
 

@@ -28,14 +28,16 @@ internal static class UpdateInstaller
         try
         {
             using var document = JsonDocument.Parse(json);
-            var tag = document.RootElement.GetProperty("tag_name").GetString();
-            return tag is not null && Version.TryParse(tag.TrimStart('v'), out var version) ? (tag, version) : null;
+            return ParseTag(document.RootElement.GetProperty("tag_name").GetString());
         }
         catch (Exception ex) when (ex is JsonException or KeyNotFoundException or InvalidOperationException)
         {
             return null;
         }
     }
+
+    public static (string Tag, Version Version)? ParseTag(string? tag) =>
+        tag is not null && Version.TryParse(tag.TrimStart('v'), out var version) ? (tag, version) : null;
 
     public static bool IsNewer(Version candidate, Version current) => candidate > current;
 
@@ -46,12 +48,12 @@ internal static class UpdateInstaller
         {
             using var zip = ZipFile.OpenRead(zipPath);
             var entry = zip.Entries.FirstOrDefault(e => e.FullName == ExeName)
-                ?? throw new UserMessageException("Güncelleme paketinde Nimbus.exe yok; güncelleme kurulmadı.");
+                ?? throw new UserMessageException(Strings.UpdateNoExeInPackage);
             entry.ExtractToFile(destination, overwrite: true);
         }
         catch (InvalidDataException)
         {
-            throw new UserMessageException("Güncelleme paketi bozuk; güncelleme kurulmadı.");
+            throw new UserMessageException(Strings.UpdatePackageDamaged);
         }
     }
 
@@ -61,14 +63,14 @@ internal static class UpdateInstaller
         switch (UpdateSignature.Verify(exePath, hashFileText, signatureText, publicKey))
         {
             case UpdateVerification.HashMismatch:
-                throw new UserMessageException("Güncellemenin SHA-256 özeti tutmadı; güncelleme kurulmadı.");
+                throw new UserMessageException(Strings.UpdateHashMismatch);
             case UpdateVerification.BadSignature:
-                throw new UserMessageException("Güncellemenin imzası doğrulanamadı; güncelleme kurulmadı.");
+                throw new UserMessageException(Strings.UpdateSignatureInvalid);
         }
 
         var exeVersion = ReadVersion(exePath);
         if (exeVersion != tagVersion || !IsNewer(exeVersion, currentVersion))
-            throw new UserMessageException("Güncellemenin sürüm bilgisi tutmadı; güncelleme kurulmadı.");
+            throw new UserMessageException(Strings.UpdateVersionMismatch);
     }
 
     public static void Swap(string currentExe, string newExe)
@@ -89,7 +91,7 @@ internal static class UpdateInstaller
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            throw new UserMessageException("Nimbus klasörüne yazılamadığı için güncelleme kurulmadı.");
+            throw new UserMessageException(Strings.UpdateFolderNotWritable);
         }
     }
 

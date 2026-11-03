@@ -12,11 +12,13 @@ internal sealed record RecentFile(string Path, string FileId, DateTime OpenedUtc
         var elapsed = utcNow - OpenedUtc;
         return elapsed switch
         {
-            { TotalMinutes: < 1 } => "az önce",
-            { TotalHours: < 1 } => $"{(int)elapsed.TotalMinutes} dakika önce",
-            { TotalDays: < 1 } => $"{(int)elapsed.TotalHours} saat önce",
-            { TotalDays: < 2 } => "dün",
-            _ => $"{(int)elapsed.TotalDays} gün önce",
+            { TotalMinutes: < 1 } => Strings.TimeJustNow,
+            { TotalMinutes: < 2 } => Strings.TimeMinuteAgo,
+            { TotalHours: < 1 } => string.Format(Strings.TimeMinutesAgo, (int)elapsed.TotalMinutes),
+            { TotalHours: < 2 } => Strings.TimeHourAgo,
+            { TotalDays: < 1 } => string.Format(Strings.TimeHoursAgo, (int)elapsed.TotalHours),
+            { TotalDays: < 2 } => Strings.TimeYesterday,
+            _ => string.Format(Strings.TimeDaysAgo, (int)elapsed.TotalDays),
         };
     }
 }

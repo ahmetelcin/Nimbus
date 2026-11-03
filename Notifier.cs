@@ -16,12 +16,6 @@ internal enum ConflictChoice
     KeepBoth,
 }
 
-internal enum UpdateChoice
-{
-    Now,
-    Always,
-}
-
 internal sealed class Notifier
 {
     private const string AppTitle = "Nimbus";
@@ -72,14 +66,14 @@ internal sealed class Notifier
             <toast scenario="reminder">
               <visual>
                 <binding template="ToastGeneric">
-                  <text>{SecurityElement.Escape($"{fileName} iki yerde de değişti")}</text>
-                  <text>Hem Google'da hem bilgisayarda kaydedilmemiş değişiklik var. Hiçbir şey otomatik yazılmadı.</text>
+                  <text>{SecurityElement.Escape(string.Format(Strings.ConflictTitle, fileName))}</text>
+                  <text>{SecurityElement.Escape(Strings.ConflictBody)}</text>
                 </binding>
               </visual>
               <actions>
-                <action activationType="foreground" arguments="{ConflictChoice.TakeGoogle}" content="Google'dakini al" />
-                <action activationType="foreground" arguments="{ConflictChoice.KeepLocal}" content="Yerelini koru" />
-                <action activationType="foreground" arguments="{ConflictChoice.KeepBoth}" content="İkisini de tut" />
+                <action activationType="foreground" arguments="{ConflictChoice.TakeGoogle}" content="{SecurityElement.Escape(Strings.ConflictTakeGoogle)}" />
+                <action activationType="foreground" arguments="{ConflictChoice.KeepLocal}" content="{SecurityElement.Escape(Strings.ConflictKeepLocal)}" />
+                <action activationType="foreground" arguments="{ConflictChoice.KeepBoth}" content="{SecurityElement.Escape(Strings.ConflictKeepBoth)}" />
               </actions>
             </toast>
             """);
@@ -87,27 +81,45 @@ internal sealed class Notifier
         ShowChoiceToast(xml, "conflict", key, onChoice);
     }
 
-    // onChoice başka bir iş parçacığından çağrılabilir.
-    public void ShowUpdateAvailable(string version, Action<UpdateChoice> onChoice)
+    // onClick başka bir iş parçacığından çağrılabilir.
+    public void ShowUpdateAvailable(string version, Action onClick)
     {
         var xml = new XmlDocument();
         xml.LoadXml($"""
-            <toast scenario="reminder">
+            <toast>
               <visual>
                 <binding template="ToastGeneric">
-                  <text>{SecurityElement.Escape($"Nimbus v{version} çıktı")}</text>
-                  <text>Güncelleme kurulunca Nimbus kısa süreliğine kapanıp yeniden açılır.</text>
+                  <text>{SecurityElement.Escape(string.Format(Strings.UpdateAvailableTitle, version))}</text>
                 </binding>
               </visual>
-              <actions>
-                <action activationType="foreground" arguments="{UpdateChoice.Now}" content="Şimdi güncelle" />
-                <action activationType="foreground" arguments="{UpdateChoice.Always}" content="Her zaman otomatik güncelle" />
-                <action activationType="system" arguments="dismiss" content="Sonra" />
-              </actions>
             </toast>
             """);
 
-        ShowChoiceToast(xml, "update", "update", onChoice);
+        var tag = UpdateToastTag;
+        var toast = new ToastNotification(xml) { Tag = tag, Group = Group };
+        toast.Activated += (_, _) =>
+        {
+            _choiceToasts.TryRemove(tag, out ToastNotification? _);
+            onClick();
+        };
+
+        // Olay yalnızca nesne yaşadığı sürece gelir.
+        _choiceToasts[tag] = toast;
+        TryShow(toast);
+    }
+
+    // Pencerede yanıt verilince bildirim merkezinde kalan bildirim aynı şeyi tekrar sormasın.
+    public void DismissUpdateAvailable()
+    {
+        var tag = UpdateToastTag;
+        _choiceToasts.TryRemove(tag, out ToastNotification? _);
+        try
+        {
+            ToastNotificationManager.History.Remove(tag, Group, AppUserModelId);
+        }
+        catch (COMException)
+        {
+        }
     }
 
     private void ShowChoiceToast<TChoice>(XmlDocument xml, string kind, string key, Action<TChoice> onChoice)
@@ -129,15 +141,15 @@ internal sealed class Notifier
 
     public void ShowError(string message)
     {
-        if (!AreEnabled() || !TryShow(CreateTextToast("Nimbus: işlem tamamlanamadı", message)))
+        if (!AreEnabled() || !TryShow(CreateTextToast(Strings.ErrorTitle, message)))
             MessageBox.Show(message, AppTitle, MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
     public void ShowProgress(string fileName) =>
-        ShowProgressToast(fileName, $"Yükleniyor: {fileName}", CreateProgressData(0));
+        ShowProgressToast(fileName, string.Format(Strings.ProgressUploadingFile, fileName), CreateProgressData(0));
 
     public void ShowDownload(string fileName) =>
-        ShowProgressToast(fileName, $"Google'dan alınıyor: {fileName}", CreateProgressData(null, "İndiriliyor…"));
+        ShowProgressToast(fileName, string.Format(Strings.ProgressDownloadingFile, fileName), CreateProgressData(null, Strings.ProgressDownloading));
 
     private void ShowProgressToast(string fileName, string title, NotificationData data)
     {
@@ -162,7 +174,7 @@ internal sealed class Notifier
                 </binding>
               </visual>
               <actions>
-                <action activationType="system" arguments="dismiss" content="Gizle" />
+                <action activationType="system" arguments="dismiss" content="{SecurityElement.Escape(Strings.ProgressHide)}" />
               </actions>
               <audio silent="true" />
             </toast>
@@ -196,8 +208,8 @@ internal sealed class Notifier
         }
 
         StatusChanged?.Invoke(fraction is { } f
-            ? $"Yükleniyor: {fileName} (%{Math.Round(f * 100)})"
-            : $"Dönüştürülüyor: {fileName}");
+            ? string.Format(Strings.ProgressUploadingFilePercent, fileName, Math.Round(f * 100))
+            : string.Format(Strings.ProgressConvertingFile, fileName));
     }
 
     public void ClearProgress()
@@ -222,14 +234,16 @@ internal sealed class Notifier
         var data = new NotificationData { SequenceNumber = ++_sequence };
         // Değer ondalık noktayla yazılmalı; Türkçe kültürdeki virgül çubuğu bozar.
         data.Values["progressValue"] = fraction?.ToString("0.###", CultureInfo.InvariantCulture) ?? "indeterminate";
-        data.Values["progressText"] = fraction is { } f ? $"%{Math.Round(f * 100)}" : " ";
-        data.Values["progressStatus"] = status ?? (fraction is null ? "Dönüştürülüyor…" : "Yükleniyor…");
+        data.Values["progressText"] = fraction is { } f ? string.Format(Strings.ProgressPercent, Math.Round(f * 100)) : " ";
+        data.Values["progressStatus"] = status ?? (fraction is null ? Strings.ProgressConverting : Strings.ProgressUploading);
         return data;
     }
 
     private static bool IsAllowed(OptionalNotification kind) => !AppSettings.Load().DisabledNotifications.Contains(kind);
 
     private static string TagFor(string kind, string key) => $"{kind}-{key.GetHashCode():X8}";
+
+    private static string UpdateToastTag => TagFor("update", "update");
 
     private static ToastNotification CreateTextToast(string title, string message, bool silent = false)
     {

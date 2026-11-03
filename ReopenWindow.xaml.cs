@@ -8,7 +8,7 @@ public partial class ReopenWindow : FluentWindow
     public ReopenWindow(string fileName)
     {
         InitializeComponent();
-        MessageText.Text = $"{fileName} Google'da düzenlenmiş ve bu değişiklikler bilgisayardaki dosyaya henüz kaydedilmemiş. Baştan başlarsanız eski kopya Drive'da kalır.";
+        MessageText.Text = string.Format(Strings.ReopenMessage, fileName);
     }
 
     internal ReopenChoice? Choice { get; private set; }

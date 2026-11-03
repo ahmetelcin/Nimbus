@@ -7,6 +7,8 @@ internal static class Program
     [STAThread]
     private static int Main(string[] args)
     {
+        Localization.Apply();
+
         // İkinci örneğin çalışma klasörü farklı olabilir; yol tam hâliyle iletilir.
         var paths = args.Where(a => !string.IsNullOrWhiteSpace(a)).Select(Path.GetFullPath).ToList();
 
@@ -16,7 +18,7 @@ internal static class Program
             if (SingleInstance.TrySend(paths))
                 return 0;
 
-            MessageBox.Show("Çalışan Nimbus uygulamasına ulaşılamadı.", "Nimbus", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(Strings.AnotherInstanceUnreachable, "Nimbus", MessageBoxButton.OK, MessageBoxImage.Error);
             return 1;
         }
 

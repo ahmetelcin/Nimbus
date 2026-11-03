@@ -20,7 +20,7 @@ internal sealed class SaveBack(Session session, Notifier notifier)
         var name = Path.GetFileName(file.Path);
         var folder = Path.GetDirectoryName(file.Path)!;
         if (!Directory.Exists(folder))
-            throw new UserMessageException($"{name} dosyasının klasörü bulunamadı: {folder}");
+            throw new UserMessageException(string.Format(Strings.FolderNotFound, name, folder));
 
         var target = FileTypes.SavePath(file.Path);
         LocalFiles.EnsureWritable(target);
@@ -28,7 +28,7 @@ internal sealed class SaveBack(Session session, Notifier notifier)
         var credential = await session.GetCredentialAsync();
         using var drive = new DriveUploader(credential);
         var state = await drive.GetStateAsync(file.FileId)
-            ?? throw new UserMessageException($"{name} dosyasının Google kopyası bulunamadı. Silinmiş, çöp kutusuna taşınmış ya da başka bir hesapta olabilir.");
+            ?? throw new UserMessageException(string.Format(Strings.GoogleCopyMissing, name));
 
         // Google'ın dönüştürdüğü hâli, ortada değişiklik yokken dosyanın yerine geçmesin.
         if (File.Exists(target)
@@ -36,7 +36,7 @@ internal sealed class SaveBack(Session session, Notifier notifier)
             && !SyncRules.GoogleChanged(record, state)
             && !UploadHistory.HasLocalChanges(target))
         {
-            notifier.ShowInfo("Dosya zaten güncel", $"{Path.GetFileName(target)} ile Google kopyası arasında kaydedilecek bir fark yok.");
+            notifier.ShowInfo(Strings.SaveAlreadyCurrentTitle, string.Format(Strings.SaveAlreadyCurrentBody, Path.GetFileName(target)));
             return;
         }
 
@@ -121,15 +121,13 @@ internal sealed class SaveBack(Session session, Notifier notifier)
         var name = Path.GetFileName(target);
         var dialog = new MessageBox
         {
-            Title = "Bilgisayardaki dosya değişmiş",
-            Content = isOriginal
-                ? $"{name}, Google kopyası oluşturulduktan sonra bilgisayarda değiştirilmiş. Üzerine yazarsanız bu değişiklikler dosyada kalmaz; önceki sürüm yedeklenir."
-                : $"Bu klasörde {name} adlı bir dosya zaten var ve Nimbus'un kaydettiği sürümden farklı. Üzerine yazarsanız önceki sürüm yedeklenir.",
+            Title = Strings.SaveConflictTitle,
+            Content = string.Format(isOriginal ? Strings.SaveConflictOriginal : Strings.SaveConflictExisting, name),
             Width = ConflictDialogWidth,
             MaxWidth = ConflictDialogWidth,
-            PrimaryButtonText = "Üzerine yaz",
-            SecondaryButtonText = "Yanına kopya olarak kaydet",
-            CloseButtonText = "İptal",
+            PrimaryButtonText = Strings.SaveConflictOverwrite,
+            SecondaryButtonText = Strings.SaveConflictCopy,
+            CloseButtonText = Strings.Cancel,
         };
 
         return await dialog.ShowDialogAsync() switch
@@ -145,19 +143,19 @@ internal sealed class SaveBack(Session session, Notifier notifier)
         var name = Path.GetFileName(target);
         if (isCopy)
         {
-            notifier.ShowInfo("Kopya kaydedildi", $"Google'daki sürüm {name} olarak kaydedildi. Mevcut dosya değişmedi.");
+            notifier.ShowInfo(Strings.SaveCopyTitle, string.Format(Strings.SaveCopyBody, name));
         }
         else if (target != original)
         {
             notifier.ShowInfo(
-                "Yeni biçimde kaydedildi",
-                $"{Path.GetFileName(original)} eski bir biçim olduğu için Google'daki sürüm {name} olarak yanına kaydedildi. Eski dosya değişmedi.");
+                Strings.SaveLegacyTitle,
+                string.Format(Strings.SaveLegacyBody, Path.GetFileName(original), name));
         }
         else
         {
-            var backup = replacedFile ? " Önceki sürüm yedeklendi." : "";
-            var csv = Path.GetExtension(target).Equals(".csv", StringComparison.OrdinalIgnoreCase) ? " CSV yalnızca ilk sayfayı içerir." : "";
-            notifier.ShowInfo("Bilgisayara kaydedildi", $"{name}, Google'daki sürümle güncellendi.{backup}{csv}");
+            var backup = replacedFile ? Strings.SaveBackupNote : "";
+            var csv = Path.GetExtension(target).Equals(".csv", StringComparison.OrdinalIgnoreCase) ? Strings.SaveCsvNote : "";
+            notifier.ShowInfo(Strings.SaveDoneTitle, string.Format(Strings.SaveDoneBody, name, backup, csv));
         }
     }
 }

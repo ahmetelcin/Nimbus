@@ -7,7 +7,6 @@ internal static class ExplorerMenu
 {
     private const string AssociationsKey = @"Software\Classes\SystemFileAssociations";
     private const string VerbName = "Nimbus";
-    private const string VerbText = "Nimbus ile aç";
 
     public static void SetEnabled(bool enabled)
     {
@@ -26,7 +25,7 @@ internal static class ExplorerMenu
     private static void Add(string extension)
     {
         using var verb = Registry.CurrentUser.CreateSubKey($@"{AssociationsKey}\{extension}\shell\{VerbName}");
-        verb.SetValue(null, VerbText);
+        verb.SetValue(null, Strings.ExplorerVerb);
         verb.SetValue("Icon", $"\"{Environment.ProcessPath}\",0");
         using var command = verb.CreateSubKey("command");
         command.SetValue(null, $"\"{Environment.ProcessPath}\" \"%1\"");

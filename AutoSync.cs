@@ -83,8 +83,8 @@ internal sealed class AutoSync(Session session, Notifier notifier, Func<Func<Tas
 
                 notifier.ShowAutoSaved(
                     file.FileId,
-                    "Otomatik kaydedildi",
-                    $"{Path.GetFileName(target)}, Google'daki sürümle güncellendi.");
+                    Strings.SaveAutoTitle,
+                    string.Format(Strings.SaveAutoBody, Path.GetFileName(target)));
                 break;
 
             case SyncAction.Conflict when _notifiedConflicts.Add(file.FileId):
@@ -100,7 +100,7 @@ internal sealed class AutoSync(Session session, Notifier notifier, Func<Func<Tas
         var credential = await session.GetCredentialAsync();
         using var drive = new DriveUploader(credential);
         var state = await drive.GetStateAsync(file.FileId)
-            ?? throw new UserMessageException($"{Path.GetFileName(file.Path)} dosyasının Google kopyası bulunamadı.");
+            ?? throw new UserMessageException(string.Format(Strings.GoogleCopyMissingShort, Path.GetFileName(file.Path)));
 
         if (choice == ConflictChoice.KeepLocal)
         {
@@ -127,11 +127,11 @@ internal sealed class AutoSync(Session session, Notifier notifier, Func<Func<Tas
         {
             // Belge artık kopyaya bağlı; yerel dosya yeniden açılınca kendi Google kopyasını alır.
             UploadHistory.Remove(target);
-            notifier.ShowInfo("Kopya kaydedildi", $"Google'daki sürüm {Path.GetFileName(destination)} olarak kaydedildi. Mevcut dosya değişmedi.");
+            notifier.ShowInfo(Strings.SaveCopyTitle, string.Format(Strings.SaveCopyBody, Path.GetFileName(destination)));
         }
         else
         {
-            notifier.ShowInfo("Bilgisayara kaydedildi", $"{Path.GetFileName(target)}, Google'daki sürümle güncellendi. Önceki sürüm yedeklendi.");
+            notifier.ShowInfo(Strings.SaveDoneTitle, string.Format(Strings.SaveDoneBody, Path.GetFileName(target), Strings.SaveBackupNote, ""));
         }
     }
 }

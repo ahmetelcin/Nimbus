@@ -7,7 +7,7 @@ using Org.BouncyCastle.Crypto.Signers;
 using Org.BouncyCastle.Security;
 
 // Creates the update signing key and signs release builds.
-// The private key is never printed and never stored in a git repository.
+// The private key is never printed, never stored unencrypted and never stored in a git repository.
 
 var defaultKey = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nimbus", "update-signing.key");
 
@@ -20,7 +20,7 @@ try
         _ => Usage(),
     };
 }
-catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or FormatException or ArgumentException)
+catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or KeyFileException)
 {
     Console.Error.WriteLine($"Error: {ex.Message}");
     return 1;
@@ -55,14 +55,21 @@ static int KeyGen(string keyPath, string? sourcePath)
         return 1;
     }
 
+    var passphrase = Passphrase.AskNew();
     var privateKey = new Ed25519PrivateKeyParameters(new SecureRandom());
     var publicKey = Convert.ToBase64String(privateKey.GeneratePublicKey().GetEncoded());
 
     Directory.CreateDirectory(Path.GetDirectoryName(keyPath)!);
-    using (var file = new FileStream(keyPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-    using (var writer = new StreamWriter(file))
-        writer.Write(Convert.ToBase64String(privateKey.GetEncoded()));
+    KeyFile.Write(keyPath, privateKey.GetEncoded(), passphrase);
     RestrictToCurrentUser(keyPath);
+
+    // A key that can't be read back must not become the trusted one.
+    if (!KeyFile.Read(keyPath, passphrase).SequenceEqual(privateKey.GetEncoded()))
+    {
+        File.Delete(keyPath);
+        Console.Error.WriteLine("Error: the key couldn't be read back. Nothing was kept.");
+        return 1;
+    }
 
     if (sourcePath is not null)
     {
@@ -73,7 +80,7 @@ static int KeyGen(string keyPath, string? sourcePath)
 
     Console.WriteLine($"Private key: {keyPath}");
     Console.WriteLine($"Public key: {publicKey}");
-    Console.WriteLine("Back up the private key somewhere safe. If you lose it, installed copies can't update themselves.");
+    Console.WriteLine("Back up the key file and remember the passphrase. If you lose either, installed copies can't update themselves.");
     return 0;
 }
 
@@ -85,7 +92,13 @@ static int Sign(string exePath, string keyPath, bool skipKeyCheck)
         return 1;
     }
 
-    var privateKey = new Ed25519PrivateKeyParameters(Convert.FromBase64String(File.ReadAllText(keyPath).Trim()));
+    if (!File.Exists(keyPath))
+    {
+        Console.Error.WriteLine($"Error: {keyPath} doesn't exist. Run keygen first.");
+        return 1;
+    }
+
+    var privateKey = new Ed25519PrivateKeyParameters(KeyFile.Read(keyPath, Passphrase.Ask()));
     var publicKey = Convert.ToBase64String(privateKey.GeneratePublicKey().GetEncoded());
     if (!skipKeyCheck && publicKey != UpdateKey.PublicKey)
     {

@@ -23,7 +23,7 @@ internal static class FileAssociations
     {
         using (var progId = Registry.CurrentUser.CreateSubKey($@"{ClassesKey}\{ProgId}"))
         {
-            progId.SetValue(null, "Nimbus ile Google'da açılan dosya");
+            progId.SetValue(null, Strings.FileTypeDescription);
             using (var icon = progId.CreateSubKey("DefaultIcon"))
                 icon.SetValue(null, $"\"{Environment.ProcessPath}\",0");
             using var command = progId.CreateSubKey(@"shell\open\command");
@@ -33,7 +33,7 @@ internal static class FileAssociations
         using (var capabilities = Registry.CurrentUser.CreateSubKey(CapabilitiesKey))
         {
             capabilities.SetValue("ApplicationName", AppName);
-            capabilities.SetValue("ApplicationDescription", "Office dosyalarını Google Slaytlar, Dokümanlar ve E-Tablolar'da açar.");
+            capabilities.SetValue("ApplicationDescription", Strings.AppDescription);
             using var associations = capabilities.CreateSubKey("FileAssociations");
             foreach (var extension in FileTypes.Extensions)
                 associations.SetValue(extension, ProgId);
@@ -65,11 +65,13 @@ internal static class FileAssociations
         NotifyShell();
     }
 
-    // Exe taşındıysa kayıtlı komut eski yolu gösterir; bağlıysa açılışta güncellenir.
+    // Exe taşındıysa komut eski yolu, dil değiştiyse açıklama eski dili gösterir; bağlıysa güncellenir.
     public static void RefreshIfRegistered()
     {
-        using var command = Registry.CurrentUser.OpenSubKey($@"{ClassesKey}\{ProgId}\shell\open\command");
-        if (command?.GetValue(null) is string current && current != OpenCommand)
+        using var progId = Registry.CurrentUser.OpenSubKey($@"{ClassesKey}\{ProgId}");
+        using var command = progId?.OpenSubKey(@"shell\open\command");
+        if (command?.GetValue(null) is string current
+            && (current != OpenCommand || progId!.GetValue(null) as string != Strings.FileTypeDescription))
             Register();
     }
 

@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccountNotSignedIn" xml:space="preserve">
+    <value>Not signed in</value>
+  </data>
+  <data name="AccountSignedIn" xml:space="preserve">
+    <value>Signed in</value>
+  </data>
+  <data name="AnotherInstanceUnreachable" xml:space="preserve">
+    <value>Couldn't reach the running copy of Nimbus.</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Opens Office files in Google Slides, Docs and Sheets.</value>
+  </data>
+  <data name="BackupFailed" xml:space="preserve">
+    <value>{0} wasn't changed, because it couldn't be backed up.</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CleanDoneBody" xml:space="preserve">
+    <value>{0} files were moved to the trash.</value>
+  </data>
+  <data name="CleanDoneTitle" xml:space="preserve">
+    <value>Cleanup finished</value>
+  </data>
+  <data name="CleanNothingBody" xml:space="preserve">
+    <value>The Nimbus folder has no files older than {0} days.</value>
+  </data>
+  <data name="CleanNothingTitle" xml:space="preserve">
+    <value>No files to clean up</value>
+  </data>
+  <data name="CleanPrimary" xml:space="preserve">
+    <value>Move to trash</value>
+  </data>
+  <data name="CleanPromptBody" xml:space="preserve">
+    <value>{1} files in the Nimbus folder that haven't changed for {0} days will be moved to the trash.</value>
+  </data>
+  <data name="CleanPromptTitle" xml:space="preserve">
+    <value>Clean up old files</value>
+  </data>
+  <data name="ClipboardBusy" xml:space="preserve">
+    <value>Another program is using the clipboard. Try again.</value>
+  </data>
+  <data name="ConflictBody" xml:space="preserve">
+    <value>Both Google and this PC have unsaved changes. Nothing was written automatically.</value>
+  </data>
+  <data name="ConflictKeepBoth" xml:space="preserve">
+    <value>Keep both</value>
+  </data>
+  <data name="ConflictKeepLocal" xml:space="preserve">
+    <value>Keep the local file</value>
+  </data>
+  <data name="ConflictTakeGoogle" xml:space="preserve">
+    <value>Use Google's version</value>
+  </data>
+  <data name="ConflictTitle" xml:space="preserve">
+    <value>{0} changed in both places</value>
+  </data>
+  <data name="CopySuffix" xml:space="preserve">
+    <value>Nimbus copy</value>
+  </data>
+  <data name="DownloadIncomplete" xml:space="preserve">
+    <value>{0} didn't download completely from Google. The file wasn't changed. Try again.</value>
+  </data>
+  <data name="DriveConvertFailed" xml:space="preserve">
+    <value>Google Drive couldn't convert the file. It may be damaged, empty or over the size limit.</value>
+  </data>
+  <data name="DriveDeniedRequest" xml:space="preserve">
+    <value>Google Drive denied the request (HTTP {0}).</value>
+  </data>
+  <data name="DriveNoLink" xml:space="preserve">
+    <value>The file was uploaded, but Drive didn't return a link.</value>
+  </data>
+  <data name="DriveNoPermission" xml:space="preserve">
+    <value>Drive permission wasn't granted at sign-in. Sign out, then sign in again and approve it.</value>
+  </data>
+  <data name="DriveNotEnabled" xml:space="preserve">
+    <value>The Drive API isn't enabled in this Google Cloud project.</value>
+  </data>
+  <data name="DriveQuotaFull" xml:space="preserve">
+    <value>Your Google Drive storage is full.</value>
+  </data>
+  <data name="DriveRateLimited" xml:space="preserve">
+    <value>Google Drive received too many requests. Try again in a moment.</value>
+  </data>
+  <data name="DriveUnavailable" xml:space="preserve">
+    <value>Google Drive isn't responding. Try again in a moment.</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>Nimbus: the operation didn't finish</value>
+  </data>
+  <data name="ExplorerVerb" xml:space="preserve">
+    <value>Open with Nimbus</value>
+  </data>
+  <data name="ExportFailed" xml:space="preserve">
+    <value>The file couldn't be downloaded from Google.</value>
+  </data>
+  <data name="ExportOverLimit" xml:space="preserve">
+    <value>The file couldn't be downloaded, because it's over Google's download limit.</value>
+  </data>
+  <data name="FileLocked" xml:space="preserve">
+    <value>The file is locked by another program: {0}</value>
+  </data>
+  <data name="FileNoReadPermission" xml:space="preserve">
+    <value>No permission to read the file: {0}</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>File not found: {0}</value>
+  </data>
+  <data name="FileNoWritePermission" xml:space="preserve">
+    <value>No permission to write to {0}. It may be read-only.</value>
+  </data>
+  <data name="FileOpenElsewhere" xml:space="preserve">
+    <value>{0} is open in another program. Close it and try again.</value>
+  </data>
+  <data name="FileTypeDescription" xml:space="preserve">
+    <value>File opened in Google with Nimbus</value>
+  </data>
+  <data name="FileTypesRemovedBody" xml:space="preserve">
+    <value>Nimbus no longer appears in the Default apps list.</value>
+  </data>
+  <data name="FileTypesRemovedTitle" xml:space="preserve">
+    <value>File type links removed</value>
+  </data>
+  <data name="FileTypesSavedBody" xml:space="preserve">
+    <value>On the page that opened, set Nimbus as the default for each file type.</value>
+  </data>
+  <data name="FileTypesSavedTitle" xml:space="preserve">
+    <value>File types registered</value>
+  </data>
+  <data name="FolderNotFound" xml:space="preserve">
+    <value>The folder of {0} wasn't found: {1}</value>
+  </data>
+  <data name="GoogleCopyMissing" xml:space="preserve">
+    <value>The Google copy of {0} wasn't found. It may have been deleted, moved to the trash or be in another account.</value>
+  </data>
+  <data name="GoogleCopyMissingShort" xml:space="preserve">
+    <value>The Google copy of {0} wasn't found.</value>
+  </data>
+  <data name="LinkCopiedAnyone" xml:space="preserve">
+    <value>{0}: anyone with the link can view it.</value>
+  </data>
+  <data name="LinkCopiedPrivate" xml:space="preserve">
+    <value>{0}: only people with access can open it.</value>
+  </data>
+  <data name="LinkCopiedTitle" xml:space="preserve">
+    <value>Link copied</value>
+  </data>
+  <data name="MenuCleanOldFiles" xml:space="preserve">
+    <value>Clean up old files</value>
+  </data>
+  <data name="MenuCopyLink" xml:space="preserve">
+    <value>Copy link</value>
+  </data>
+  <data name="MenuCopyLinkAnyone" xml:space="preserve">
+    <value>Anyone with the link can view…</value>
+  </data>
+  <data name="MenuCopyLinkPrivate" xml:space="preserve">
+    <value>Only for me</value>
+  </data>
+  <data name="MenuExit" xml:space="preserve">
+    <value>Close Nimbus</value>
+  </data>
+  <data name="MenuLinkFileTypes" xml:space="preserve">
+    <value>Link file types…</value>
+  </data>
+  <data name="MenuOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="MenuRecentFiles" xml:space="preserve">
+    <value>Recent files</value>
+  </data>
+  <data name="MenuSaveToComputer" xml:space="preserve">
+    <value>Save to computer</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Settings…</value>
+  </data>
+  <data name="MenuShowInFolder" xml:space="preserve">
+    <value>Show in folder</value>
+  </data>
+  <data name="MenuSignIn" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="MenuSignOut" xml:space="preserve">
+    <value>Sign out</value>
+  </data>
+  <data name="MenuStopSharing" xml:space="preserve">
+    <value>Stop sharing</value>
+  </data>
+  <data name="MenuUpdateAvailable" xml:space="preserve">
+    <value>Update available: v{0}</value>
+  </data>
+  <data name="MenuUpdating" xml:space="preserve">
+    <value>Updating to v{0}…</value>
+  </data>
+  <data name="NoInternet" xml:space="preserve">
+    <value>Couldn't reach Google. Check your internet connection.</value>
+  </data>
+  <data name="OpenedPreviousBody" xml:space="preserve">
+    <value>{0} hasn't changed, so it wasn't uploaded again.</value>
+  </data>
+  <data name="OpenedPreviousTitle" xml:space="preserve">
+    <value>Opening the previous copy</value>
+  </data>
+  <data name="ProgressConverting" xml:space="preserve">
+    <value>Converting…</value>
+  </data>
+  <data name="ProgressConvertingFile" xml:space="preserve">
+    <value>Converting: {0}</value>
+  </data>
+  <data name="ProgressDownloading" xml:space="preserve">
+    <value>Downloading…</value>
+  </data>
+  <data name="ProgressDownloadingFile" xml:space="preserve">
+    <value>Getting from Google: {0}</value>
+  </data>
+  <data name="ProgressHide" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="ProgressPercent" xml:space="preserve">
+    <value>{0}%</value>
+  </data>
+  <data name="ProgressUploading" xml:space="preserve">
+    <value>Uploading…</value>
+  </data>
+  <data name="ProgressUploadingFile" xml:space="preserve">
+    <value>Uploading: {0}</value>
+  </data>
+  <data name="ProgressUploadingFilePercent" xml:space="preserve">
+    <value>Uploading: {0} ({1}%)</value>
+  </data>
+  <data name="ReopenContinue" xml:space="preserve">
+    <value>Continue where you left off (latest Google version)</value>
+  </data>
+  <data name="ReopenDontAsk" xml:space="preserve">
+    <value>Don't ask again</value>
+  </data>
+  <data name="ReopenMessage" xml:space="preserve">
+    <value>{0} was edited in Google, and those changes aren't saved to this PC yet. If you start over, the old copy stays in Drive.</value>
+  </data>
+  <data name="ReopenStartOver" xml:space="preserve">
+    <value>Start over from this PC's file (upload a new copy)</value>
+  </data>
+  <data name="ReopenTitle" xml:space="preserve">
+    <value>The Google copy is different</value>
+  </data>
+  <data name="RunningBody" xml:space="preserve">
+    <value>Open the menu from the icon in the system tray.</value>
+  </data>
+  <data name="RunningTitle" xml:space="preserve">
+    <value>Nimbus is running</value>
+  </data>
+  <data name="SaveAlreadyCurrentBody" xml:space="preserve">
+    <value>There's nothing to save between {0} and its Google copy.</value>
+  </data>
+  <data name="SaveAlreadyCurrentTitle" xml:space="preserve">
+    <value>The file is already up to date</value>
+  </data>
+  <data name="SaveAutoBody" xml:space="preserve">
+    <value>{0} was updated with the Google version.</value>
+  </data>
+  <data name="SaveAutoTitle" xml:space="preserve">
+    <value>Saved automatically</value>
+  </data>
+  <data name="SaveBackupNote" xml:space="preserve">
+    <value> The previous version was backed up.</value>
+  </data>
+  <data name="SaveConflictCopy" xml:space="preserve">
+    <value>Save a copy next to it</value>
+  </data>
+  <data name="SaveConflictExisting" xml:space="preserve">
+    <value>A file named {0} already exists in this folder and differs from the version Nimbus saved. If you overwrite it, the previous version is backed up.</value>
+  </data>
+  <data name="SaveConflictOriginal" xml:space="preserve">
+    <value>{0} changed on this PC after its Google copy was created. If you overwrite it, those changes won't stay in the file, but the previous version is backed up.</value>
+  </data>
+  <data name="SaveConflictOverwrite" xml:space="preserve">
+    <value>Overwrite</value>
+  </data>
+  <data name="SaveConflictTitle" xml:space="preserve">
+    <value>The file on this PC has changed</value>
+  </data>
+  <data name="SaveCopyBody" xml:space="preserve">
+    <value>Google's version was saved as {0}. The existing file didn't change.</value>
+  </data>
+  <data name="SaveCopyTitle" xml:space="preserve">
+    <value>Copy saved</value>
+  </data>
+  <data name="SaveCsvNote" xml:space="preserve">
+    <value> CSV files only contain the first sheet.</value>
+  </data>
+  <data name="SaveDoneBody" xml:space="preserve">
+    <value>{0} was updated with the Google version.{1}{2}</value>
+  </data>
+  <data name="SaveDoneTitle" xml:space="preserve">
+    <value>Saved to computer</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>{0} couldn't be saved. It may be open in another program, or the disk may be full.</value>
+  </data>
+  <data name="SaveLegacyBody" xml:space="preserve">
+    <value>{0} is in an older format, so Google's version was saved next to it as {1}. The old file didn't change.</value>
+  </data>
+  <data name="SaveLegacyTitle" xml:space="preserve">
+    <value>Saved in the new format</value>
+  </data>
+  <data name="SaveNoPermission" xml:space="preserve">
+    <value>{0} couldn't be saved: no permission to write to this location.</value>
+  </data>
+  <data name="SecretInvalid" xml:space="preserve">
+    <value>client_secret.json isn't valid. Fill it in using the template.</value>
+  </data>
+  <data name="SecretMissing" xml:space="preserve">
+    <value>client_secret.json wasn't found. It must be in the same folder as Nimbus.exe.</value>
+  </data>
+  <data name="SessionExpiredBody" xml:space="preserve">
+    <value>Sign in again to continue.</value>
+  </data>
+  <data name="SessionExpiredError" xml:space="preserve">
+    <value>Your session has ended. Sign in again and retry.</value>
+  </data>
+  <data name="SessionExpiredTitle" xml:space="preserve">
+    <value>Your session has ended</value>
+  </data>
+  <data name="SessionRefreshFailed" xml:space="preserve">
+    <value>Your Google session couldn't be renewed. Open the file again and sign in.</value>
+  </data>
+  <data name="SessionSignedOutBody" xml:space="preserve">
+    <value>Your Google account was disconnected.</value>
+  </data>
+  <data name="SessionSignedOutOffline" xml:space="preserve">
+    <value>You're signed out on this PC, but the permission is still on your account because Google couldn't be reached.</value>
+  </data>
+  <data name="SessionSignedOutTitle" xml:space="preserve">
+    <value>Signed out</value>
+  </data>
+  <data name="SettingsAutoSaveBody" xml:space="preserve">
+    <value>Writes Google edits to documents opened in the last 24 hours back to this PC.</value>
+  </data>
+  <data name="SettingsAutoSaveTitle" xml:space="preserve">
+    <value>Save back automatically</value>
+  </data>
+  <data name="SettingsAutoStartBody" xml:space="preserve">
+    <value>Nimbus starts in the tray when you sign in to Windows.</value>
+  </data>
+  <data name="SettingsAutoStartTitle" xml:space="preserve">
+    <value>Start with Windows</value>
+  </data>
+  <data name="SettingsBrowserChoose" xml:space="preserve">
+    <value>Choose…</value>
+  </data>
+  <data name="SettingsBrowserDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="SettingsBrowserDialogTitle" xml:space="preserve">
+    <value>Choose a browser</value>
+  </data>
+  <data name="SettingsBrowserFilter" xml:space="preserve">
+    <value>Applications (*.exe)|*.exe</value>
+  </data>
+  <data name="SettingsBrowserSystem" xml:space="preserve">
+    <value>Windows default browser</value>
+  </data>
+  <data name="SettingsBrowserTitle" xml:space="preserve">
+    <value>Browser</value>
+  </data>
+  <data name="SettingsCleanupBody" xml:space="preserve">
+    <value>Move files to the trash after how many unchanged days?</value>
+  </data>
+  <data name="SettingsCleanupTitle" xml:space="preserve">
+    <value>Clean up old files</value>
+  </data>
+  <data name="SettingsExplorerMenuBody" xml:space="preserve">
+    <value>Adds "Open with Nimbus" to the Explorer menu.</value>
+  </data>
+  <data name="SettingsExplorerMenuTitle" xml:space="preserve">
+    <value>Right-click menu</value>
+  </data>
+  <data name="SettingsFileTypesBody" xml:space="preserve">
+    <value>Open Office files with Nimbus.</value>
+  </data>
+  <data name="SettingsFileTypesLink" xml:space="preserve">
+    <value>Link…</value>
+  </data>
+  <data name="SettingsFileTypesTitle" xml:space="preserve">
+    <value>File types</value>
+  </data>
+  <data name="SettingsFileTypesUnlink" xml:space="preserve">
+    <value>Remove link</value>
+  </data>
+  <data name="SettingsLanguageBody" xml:space="preserve">
+    <value>Choose the language of Nimbus.</value>
+  </data>
+  <data name="SettingsLanguageSystem" xml:space="preserve">
+    <value>Windows language</value>
+  </data>
+  <data name="SettingsLanguageTitle" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="SettingsNotificationsTitle" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="SettingsNotifyAutoSaved" xml:space="preserve">
+    <value>Automatic save finished</value>
+  </data>
+  <data name="SettingsNotifyConflict" xml:space="preserve">
+    <value>Conflicts</value>
+  </data>
+  <data name="SettingsNotifyConflictBody" xml:space="preserve">
+    <value>Always on: no file is written without your choice.</value>
+  </data>
+  <data name="SettingsNotifyErrors" xml:space="preserve">
+    <value>Errors</value>
+  </data>
+  <data name="SettingsNotifyErrorsBody" xml:space="preserve">
+    <value>Always on: you find out when an operation fails.</value>
+  </data>
+  <data name="SettingsNotifyLinkCopied" xml:space="preserve">
+    <value>Link copied</value>
+  </data>
+  <data name="SettingsNotifyOpened" xml:space="preserve">
+    <value>Opened and previous copy</value>
+  </data>
+  <data name="SettingsNotifyProgress" xml:space="preserve">
+    <value>Uploading and progress</value>
+  </data>
+  <data name="SettingsNotifySession" xml:space="preserve">
+    <value>Session ended</value>
+  </data>
+  <data name="SettingsNotifySessionBody" xml:space="preserve">
+    <value>Always on: syncing stops until you sign in again.</value>
+  </data>
+  <data name="SettingsReopenAsk" xml:space="preserve">
+    <value>Ask every time</value>
+  </data>
+  <data name="SettingsReopenBody" xml:space="preserve">
+    <value>What should happen when you open the file again?</value>
+  </data>
+  <data name="SettingsReopenContinue" xml:space="preserve">
+    <value>Continue where you left off</value>
+  </data>
+  <data name="SettingsReopenStartOver" xml:space="preserve">
+    <value>Start over</value>
+  </data>
+  <data name="SettingsReopenTitle" xml:space="preserve">
+    <value>If the Google copy is different</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Nimbus settings</value>
+  </data>
+  <data name="SettingsUpdateAsk" xml:space="preserve">
+    <value>Ask</value>
+  </data>
+  <data name="SettingsUpdateAutomatic" xml:space="preserve">
+    <value>Update automatically</value>
+  </data>
+  <data name="SettingsUpdateDevBuild" xml:space="preserve">
+    <value>Version {0}. Development builds don't update themselves.</value>
+  </data>
+  <data name="SettingsUpdateOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="SettingsUpdateReleaseBuild" xml:space="preserve">
+    <value>Version {0}. Only versions with a valid signature are installed.</value>
+  </data>
+  <data name="SettingsUpdateTitle" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="ShareDialogBody" xml:space="preserve">
+    <value>Anyone with the link will be able to view {0}. You can remove this permission later with Stop sharing.</value>
+  </data>
+  <data name="ShareDialogPrimary" xml:space="preserve">
+    <value>Share and copy</value>
+  </data>
+  <data name="ShareDialogTitle" xml:space="preserve">
+    <value>Share the link with anyone</value>
+  </data>
+  <data name="SharingAlreadyOffBody" xml:space="preserve">
+    <value>{0} isn't shared with anyone.</value>
+  </data>
+  <data name="SharingAlreadyOffTitle" xml:space="preserve">
+    <value>Sharing is already off</value>
+  </data>
+  <data name="SharingStoppedBody" xml:space="preserve">
+    <value>{0}: people with the link can no longer view it.</value>
+  </data>
+  <data name="SharingStoppedTitle" xml:space="preserve">
+    <value>Sharing stopped</value>
+  </data>
+  <data name="SignInBody" xml:space="preserve">
+    <value>Files are only uploaded to your own Google Drive. Nimbus can only see the files it created.</value>
+  </data>
+  <data name="SignInButton" xml:space="preserve">
+    <value>Sign in with Google</value>
+  </data>
+  <data name="SignInDeniedError" xml:space="preserve">
+    <value>Google sign-in didn't finish, or permission wasn't granted.</value>
+  </data>
+  <data name="SignInHeadline" xml:space="preserve">
+    <value>Open your Office files in Google</value>
+  </data>
+  <data name="SignInOpeningBody" xml:space="preserve">
+    <value>The sign-in page is opening in your browser.</value>
+  </data>
+  <data name="SignInOpeningTitle" xml:space="preserve">
+    <value>Sign in with Google</value>
+  </data>
+  <data name="SignInTimeoutError" xml:space="preserve">
+    <value>Google sign-in didn't finish within 5 minutes. Try again.</value>
+  </data>
+  <data name="SignInWaiting" xml:space="preserve">
+    <value>Waiting for sign-in in your browser…</value>
+  </data>
+  <data name="TimeDaysAgo" xml:space="preserve">
+    <value>{0} days ago</value>
+  </data>
+  <data name="TimeHourAgo" xml:space="preserve">
+    <value>1 hour ago</value>
+  </data>
+  <data name="TimeHoursAgo" xml:space="preserve">
+    <value>{0} hours ago</value>
+  </data>
+  <data name="TimeJustNow" xml:space="preserve">
+    <value>Just now</value>
+  </data>
+  <data name="TimeMinuteAgo" xml:space="preserve">
+    <value>1 minute ago</value>
+  </data>
+  <data name="TimeMinutesAgo" xml:space="preserve">
+    <value>{0} minutes ago</value>
+  </data>
+  <data name="TimeYesterday" xml:space="preserve">
+    <value>Yesterday</value>
+  </data>
+  <data name="UnexpectedError" xml:space="preserve">
+    <value>An unexpected error occurred ({0}).</value>
+  </data>
+  <data name="UnsupportedFileType" xml:space="preserve">
+    <value>Unsupported file type: {0}</value>
+  </data>
+  <data name="UpdateAssetMissing" xml:space="preserve">
+    <value>The new version has no {0}, so the update wasn't installed.</value>
+  </data>
+  <data name="UpdateAvailableBody" xml:space="preserve">
+    <value>Nimbus closes and reopens briefly while the update installs.</value>
+  </data>
+  <data name="UpdateAvailableTitle" xml:space="preserve">
+    <value>Nimbus v{0} is available — click to update</value>
+  </data>
+  <data name="UpdateChoiceAlways" xml:space="preserve">
+    <value>Always update automatically</value>
+  </data>
+  <data name="UpdateChoiceLater" xml:space="preserve">
+    <value>Later</value>
+  </data>
+  <data name="UpdateChoiceNow" xml:space="preserve">
+    <value>Update now</value>
+  </data>
+  <data name="UpdateDoneBody" xml:space="preserve">
+    <value>Current version: {0}</value>
+  </data>
+  <data name="UpdateDoneTitle" xml:space="preserve">
+    <value>Nimbus updated</value>
+  </data>
+  <data name="UpdateDownloadFailed" xml:space="preserve">
+    <value>The update couldn't be downloaded. Check your internet connection.</value>
+  </data>
+  <data name="UpdateFolderNotWritable" xml:space="preserve">
+    <value>The update wasn't installed, because the Nimbus folder couldn't be written to.</value>
+  </data>
+  <data name="UpdateHashMismatch" xml:space="preserve">
+    <value>The update's SHA-256 hash didn't match, so it wasn't installed.</value>
+  </data>
+  <data name="UpdateNoExeInPackage" xml:space="preserve">
+    <value>The update package has no Nimbus.exe, so it wasn't installed.</value>
+  </data>
+  <data name="UpdatePackageDamaged" xml:space="preserve">
+    <value>The update package is damaged, so it wasn't installed.</value>
+  </data>
+  <data name="UpdateSignatureInvalid" xml:space="preserve">
+    <value>The update's signature couldn't be verified, so it wasn't installed.</value>
+  </data>
+  <data name="UpdateVersionMismatch" xml:space="preserve">
+    <value>The update's version information didn't match, so it wasn't installed.</value>
+  </data>
+  <data name="UpdateWindowTitle" xml:space="preserve">
+    <value>New version available</value>
+  </data>
+  <data name="UpdateWindowVersions" xml:space="preserve">
+    <value>Nimbus v{0} is available. You have v{1}.</value>
+  </data>
+  <data name="UpdateWriteFailed" xml:space="preserve">
+    <value>The update wasn't installed, because its files couldn't be written.</value>
+  </data>
+</root>

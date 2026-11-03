@@ -8,11 +8,15 @@ public partial class SettingsWindow : FluentWindow
 {
     private readonly Action _linkFileTypes;
     private readonly Action _unlinkFileTypes;
+    private readonly Action _languageChanged;
+    private readonly Action _updateModeChanged;
 
-    public SettingsWindow(Action linkFileTypes, Action unlinkFileTypes)
+    public SettingsWindow(Action linkFileTypes, Action unlinkFileTypes, Action languageChanged, Action updateModeChanged)
     {
         _linkFileTypes = linkFileTypes;
         _unlinkFileTypes = unlinkFileTypes;
+        _languageChanged = languageChanged;
+        _updateModeChanged = updateModeChanged;
         InitializeComponent();
 
         var settings = AppSettings.Load();
@@ -24,19 +28,23 @@ public partial class SettingsWindow : FluentWindow
         ExplorerMenuSwitch.IsChecked = settings.ExplorerMenu;
 
         UpdateModeBox.SelectedIndex = (int)settings.UpdateMode;
-        UpdateText.Text = UpdateInstaller.CanSelfUpdate
-            ? $"Sürüm {UpdateInstaller.CurrentVersion}. Yalnızca imzası doğrulanan sürümler kurulur."
-            : $"Sürüm {UpdateInstaller.CurrentVersion}. Geliştirme derlemesi kendini güncellemez.";
+        UpdateText.Text = string.Format(
+            UpdateInstaller.CanSelfUpdate ? Strings.SettingsUpdateReleaseBuild : Strings.SettingsUpdateDevBuild,
+            UpdateInstaller.CurrentVersion);
+        LanguageBox.SelectedIndex = Array.IndexOf(Languages, settings.Language);
 
         foreach (var toggle in new[] { ProgressSwitch, OpenedSwitch, AutoSavedSwitch, LinkCopiedSwitch })
             toggle.IsChecked = !settings.DisabledNotifications.Contains(NotificationOf(toggle));
     }
 
+    // Sıra LanguageBox'taki seçeneklerle aynı olmalı.
+    private static readonly string?[] Languages = [null, "tr", "en"];
+
     private static OptionalNotification NotificationOf(ToggleSwitch toggle) => Enum.Parse<OptionalNotification>((string)toggle.Tag);
 
     private void ShowBrowser(string? path)
     {
-        BrowserText.Text = path is null ? "Windows varsayılan tarayıcısı" : Path.GetFileNameWithoutExtension(path);
+        BrowserText.Text = path is null ? Strings.SettingsBrowserSystem : Path.GetFileNameWithoutExtension(path);
         DefaultBrowserButton.IsEnabled = path is not null;
     }
 
@@ -50,7 +58,7 @@ public partial class SettingsWindow : FluentWindow
 
     private void OnChooseBrowserClick(object sender, RoutedEventArgs e)
     {
-        var dialog = new OpenFileDialog { Title = "Tarayıcı seçin", Filter = "Uygulamalar (*.exe)|*.exe" };
+        var dialog = new OpenFileDialog { Title = Strings.SettingsBrowserDialogTitle, Filter = Strings.SettingsBrowserFilter };
         if (dialog.ShowDialog(this) == true)
             SaveBrowser(dialog.FileName);
     }
@@ -94,11 +102,29 @@ public partial class SettingsWindow : FluentWindow
         ExplorerMenu.SetEnabled(enabled);
     }
 
+    private void OnLanguageChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        var settings = AppSettings.Load();
+        var language = Languages[Math.Max(LanguageBox.SelectedIndex, 0)];
+        if (settings.Language == language)
+            return;
+
+        settings.Language = language;
+        settings.Save();
+        _languageChanged();
+    }
+
     private void OnUpdateModeChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
         var settings = AppSettings.Load();
-        settings.UpdateMode = (UpdateMode)UpdateModeBox.SelectedIndex;
+        var mode = (UpdateMode)UpdateModeBox.SelectedIndex;
+        // Pencere açılırken de tetiklenir; o zaman kurulum başlamamalı.
+        if (settings.UpdateMode == mode)
+            return;
+
+        settings.UpdateMode = mode;
         settings.Save();
+        _updateModeChanged();
     }
 
     private void OnNotificationClick(object sender, RoutedEventArgs e)

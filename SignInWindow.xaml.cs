@@ -5,8 +5,6 @@ namespace Nimbus;
 
 public partial class SignInWindow : FluentWindow
 {
-    private const string SignInText = "Google ile giriş yap";
-
     private readonly Func<Task<bool>> _signIn;
 
     public SignInWindow(Func<Task<bool>> signIn)
@@ -18,12 +16,12 @@ public partial class SignInWindow : FluentWindow
     private async void OnSignInClick(object sender, RoutedEventArgs e)
     {
         SignInButton.IsEnabled = false;
-        SignInButton.Content = "Tarayıcıda giriş bekleniyor…";
+        SignInButton.Content = Strings.SignInWaiting;
 
         // Başarılı girişte pencereyi App kapatır; hata bildirimle gösterilir.
         await _signIn();
 
-        SignInButton.Content = SignInText;
+        SignInButton.Content = Strings.SignInButton;
         SignInButton.IsEnabled = true;
     }
 }

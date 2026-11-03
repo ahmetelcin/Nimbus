@@ -28,7 +28,7 @@ internal sealed class Session(Notifier notifier)
     public async Task<UserCredential> GetCredentialAsync()
     {
         if (!await GoogleSignIn.HasTokenAsync())
-            notifier.ShowInfo("Google ile giriş yapın", "Giriş sayfası tarayıcınızda açılıyor.");
+            notifier.ShowInfo(Strings.SignInOpeningTitle, Strings.SignInOpeningBody);
 
         var credential = await GoogleSignIn.SignInAsync();
         if (!IsSignedIn || Email is null)
@@ -45,8 +45,8 @@ internal sealed class Session(Notifier notifier)
         var revoked = await GoogleSignIn.RevokeAndClearAsync();
         ForgetAccount();
         notifier.ShowInfo(
-            "Çıkış yapıldı",
-            revoked ? "Google hesabınızın bağlantısı kaldırıldı." : "Bu bilgisayardan çıkış yapıldı, ancak Google'a ulaşılamadığı için izin hesabınızda duruyor.");
+            Strings.SessionSignedOutTitle,
+            revoked ? Strings.SessionSignedOutBody : Strings.SessionSignedOutOffline);
     }
 
     public async Task ExpireAsync()

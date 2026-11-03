@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:local="clr-namespace:Nimbus"
     Title="Nimbus"
     Width="420"
     Height="340"
@@ -25,13 +26,13 @@
             <ui:TextBlock
                 Margin="0,0,0,8"
                 FontTypography="Subtitle"
-                Text="Office dosyalarınızı Google'da açın"
+                Text="{local:Loc SignInHeadline}"
                 TextAlignment="Center"
                 TextWrapping="Wrap" />
             <ui:TextBlock
                 Margin="0,0,0,24"
                 Appearance="Secondary"
-                Text="Dosyalar yalnızca kendi Google Drive'ınıza yüklenir. Nimbus, yalnızca kendi oluşturduğu dosyaları görebilir."
+                Text="{local:Loc SignInBody}"
                 TextAlignment="Center"
                 TextWrapping="Wrap" />
             <ui:Button
@@ -39,7 +40,7 @@
                 HorizontalAlignment="Center"
                 Appearance="Primary"
                 Click="OnSignInClick"
-                Content="Google ile giriş yap" />
+                Content="{local:Loc SignInButton}" />
         </StackPanel>
     </Grid>
 </ui:FluentWindow>

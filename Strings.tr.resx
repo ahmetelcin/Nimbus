@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccountNotSignedIn" xml:space="preserve">
+    <value>Giriş yapılmadı</value>
+  </data>
+  <data name="AccountSignedIn" xml:space="preserve">
+    <value>Giriş yapıldı</value>
+  </data>
+  <data name="AnotherInstanceUnreachable" xml:space="preserve">
+    <value>Çalışan Nimbus uygulamasına ulaşılamadı.</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Office dosyalarını Google Slaytlar, Dokümanlar ve E-Tablolar'da açar.</value>
+  </data>
+  <data name="BackupFailed" xml:space="preserve">
+    <value>{0} yedeklenemediği için dosyaya dokunulmadı.</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Vazgeç</value>
+  </data>
+  <data name="CleanDoneBody" xml:space="preserve">
+    <value>{0} dosya çöp kutusuna taşındı.</value>
+  </data>
+  <data name="CleanDoneTitle" xml:space="preserve">
+    <value>Temizlik tamamlandı</value>
+  </data>
+  <data name="CleanNothingBody" xml:space="preserve">
+    <value>Nimbus klasöründe {0} günden eski dosya bulunmuyor.</value>
+  </data>
+  <data name="CleanNothingTitle" xml:space="preserve">
+    <value>Temizlenecek dosya yok</value>
+  </data>
+  <data name="CleanPrimary" xml:space="preserve">
+    <value>Çöp kutusuna taşı</value>
+  </data>
+  <data name="CleanPromptBody" xml:space="preserve">
+    <value>Nimbus klasöründe {0} gündür değişmeyen {1} dosya çöp kutusuna taşınacak.</value>
+  </data>
+  <data name="CleanPromptTitle" xml:space="preserve">
+    <value>Eski dosyaları temizle</value>
+  </data>
+  <data name="ClipboardBusy" xml:space="preserve">
+    <value>Pano başka bir program tarafından kullanılıyor. Yeniden deneyin.</value>
+  </data>
+  <data name="ConflictBody" xml:space="preserve">
+    <value>Hem Google'da hem bilgisayarda kaydedilmemiş değişiklik var. Hiçbir şey otomatik yazılmadı.</value>
+  </data>
+  <data name="ConflictKeepBoth" xml:space="preserve">
+    <value>İkisini de tut</value>
+  </data>
+  <data name="ConflictKeepLocal" xml:space="preserve">
+    <value>Yerelini koru</value>
+  </data>
+  <data name="ConflictTakeGoogle" xml:space="preserve">
+    <value>Google'dakini al</value>
+  </data>
+  <data name="ConflictTitle" xml:space="preserve">
+    <value>{0} iki yerde de değişti</value>
+  </data>
+  <data name="CopySuffix" xml:space="preserve">
+    <value>Nimbus kopyası</value>
+  </data>
+  <data name="DownloadIncomplete" xml:space="preserve">
+    <value>{0} Google'dan eksik indirildi. Dosyaya dokunulmadı; yeniden deneyin.</value>
+  </data>
+  <data name="DriveConvertFailed" xml:space="preserve">
+    <value>Google Drive dosyayı dönüştüremedi. Dosya bozuk, boş veya desteklenen sınırların üzerinde olabilir.</value>
+  </data>
+  <data name="DriveDeniedRequest" xml:space="preserve">
+    <value>Google Drive isteği reddetti (HTTP {0}).</value>
+  </data>
+  <data name="DriveNoLink" xml:space="preserve">
+    <value>Dosya yüklendi ancak Drive bağlantı döndürmedi.</value>
+  </data>
+  <data name="DriveNoPermission" xml:space="preserve">
+    <value>Google girişinde Drive izni verilmedi. Çıkış yapıp izni onaylayarak yeniden giriş yapın.</value>
+  </data>
+  <data name="DriveNotEnabled" xml:space="preserve">
+    <value>Bu Google Cloud projesinde Drive API etkin değil.</value>
+  </data>
+  <data name="DriveQuotaFull" xml:space="preserve">
+    <value>Google Drive depolama alanınız dolu.</value>
+  </data>
+  <data name="DriveRateLimited" xml:space="preserve">
+    <value>Google Drive çok fazla istek aldı. Biraz sonra yeniden deneyin.</value>
+  </data>
+  <data name="DriveUnavailable" xml:space="preserve">
+    <value>Google Drive şu anda yanıt vermiyor. Biraz sonra yeniden deneyin.</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>Nimbus: işlem tamamlanamadı</value>
+  </data>
+  <data name="ExplorerVerb" xml:space="preserve">
+    <value>Nimbus ile aç</value>
+  </data>
+  <data name="ExportFailed" xml:space="preserve">
+    <value>Dosya Google'dan indirilemedi.</value>
+  </data>
+  <data name="ExportOverLimit" xml:space="preserve">
+    <value>Dosya, Google'ın indirme sınırını aştığı için indirilemedi.</value>
+  </data>
+  <data name="FileLocked" xml:space="preserve">
+    <value>Dosya başka bir program tarafından kilitli: {0}</value>
+  </data>
+  <data name="FileNoReadPermission" xml:space="preserve">
+    <value>Dosyayı okuma izni yok: {0}</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>Dosya bulunamadı: {0}</value>
+  </data>
+  <data name="FileNoWritePermission" xml:space="preserve">
+    <value>{0} dosyasına yazma izni yok. Dosya salt okunur olabilir.</value>
+  </data>
+  <data name="FileOpenElsewhere" xml:space="preserve">
+    <value>{0} başka bir programda açık. Dosyayı kapatıp yeniden deneyin.</value>
+  </data>
+  <data name="FileTypeDescription" xml:space="preserve">
+    <value>Nimbus ile Google'da açılan dosya</value>
+  </data>
+  <data name="FileTypesRemovedBody" xml:space="preserve">
+    <value>Nimbus artık Varsayılan uygulamalar listesinde görünmez.</value>
+  </data>
+  <data name="FileTypesRemovedTitle" xml:space="preserve">
+    <value>Dosya türü bağlantıları kaldırıldı</value>
+  </data>
+  <data name="FileTypesSavedBody" xml:space="preserve">
+    <value>Açılan sayfada her uzantı için Nimbus'u varsayılan yapın.</value>
+  </data>
+  <data name="FileTypesSavedTitle" xml:space="preserve">
+    <value>Dosya türleri kaydedildi</value>
+  </data>
+  <data name="FolderNotFound" xml:space="preserve">
+    <value>{0} dosyasının klasörü bulunamadı: {1}</value>
+  </data>
+  <data name="GoogleCopyMissing" xml:space="preserve">
+    <value>{0} dosyasının Google kopyası bulunamadı. Silinmiş, çöp kutusuna taşınmış ya da başka bir hesapta olabilir.</value>
+  </data>
+  <data name="GoogleCopyMissingShort" xml:space="preserve">
+    <value>{0} dosyasının Google kopyası bulunamadı.</value>
+  </data>
+  <data name="LinkCopiedAnyone" xml:space="preserve">
+    <value>{0}: bağlantıya sahip herkes görüntüleyebilir.</value>
+  </data>
+  <data name="LinkCopiedPrivate" xml:space="preserve">
+    <value>{0}: yalnızca erişim izni olanlar açabilir.</value>
+  </data>
+  <data name="LinkCopiedTitle" xml:space="preserve">
+    <value>Bağlantı kopyalandı</value>
+  </data>
+  <data name="MenuCleanOldFiles" xml:space="preserve">
+    <value>Eski dosyaları temizle</value>
+  </data>
+  <data name="MenuCopyLink" xml:space="preserve">
+    <value>Bağlantıyı kopyala</value>
+  </data>
+  <data name="MenuCopyLinkAnyone" xml:space="preserve">
+    <value>Bağlantıya sahip herkes görüntüleyebilir…</value>
+  </data>
+  <data name="MenuCopyLinkPrivate" xml:space="preserve">
+    <value>Sadece benim için</value>
+  </data>
+  <data name="MenuExit" xml:space="preserve">
+    <value>Nimbus'u kapat</value>
+  </data>
+  <data name="MenuLinkFileTypes" xml:space="preserve">
+    <value>Dosya türlerini bağla…</value>
+  </data>
+  <data name="MenuOpen" xml:space="preserve">
+    <value>Aç</value>
+  </data>
+  <data name="MenuRecentFiles" xml:space="preserve">
+    <value>Son dosyalar</value>
+  </data>
+  <data name="MenuSaveToComputer" xml:space="preserve">
+    <value>Bilgisayara kaydet</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Ayarlar…</value>
+  </data>
+  <data name="MenuShowInFolder" xml:space="preserve">
+    <value>Klasörde göster</value>
+  </data>
+  <data name="MenuSignIn" xml:space="preserve">
+    <value>Giriş yap</value>
+  </data>
+  <data name="MenuSignOut" xml:space="preserve">
+    <value>Hesaptan çıkış yap</value>
+  </data>
+  <data name="MenuStopSharing" xml:space="preserve">
+    <value>Paylaşımı kapat</value>
+  </data>
+  <data name="MenuUpdateAvailable" xml:space="preserve">
+    <value>Güncelleme var: v{0}</value>
+  </data>
+  <data name="MenuUpdating" xml:space="preserve">
+    <value>Güncelleniyor: v{0}…</value>
+  </data>
+  <data name="NoInternet" xml:space="preserve">
+    <value>Google'a ulaşılamadı. İnternet bağlantınızı kontrol edin.</value>
+  </data>
+  <data name="OpenedPreviousBody" xml:space="preserve">
+    <value>{0} değişmediği için yeniden yüklenmedi.</value>
+  </data>
+  <data name="OpenedPreviousTitle" xml:space="preserve">
+    <value>Önceki kopya açılıyor</value>
+  </data>
+  <data name="ProgressConverting" xml:space="preserve">
+    <value>Dönüştürülüyor…</value>
+  </data>
+  <data name="ProgressConvertingFile" xml:space="preserve">
+    <value>Dönüştürülüyor: {0}</value>
+  </data>
+  <data name="ProgressDownloading" xml:space="preserve">
+    <value>İndiriliyor…</value>
+  </data>
+  <data name="ProgressDownloadingFile" xml:space="preserve">
+    <value>Google'dan alınıyor: {0}</value>
+  </data>
+  <data name="ProgressHide" xml:space="preserve">
+    <value>Gizle</value>
+  </data>
+  <data name="ProgressPercent" xml:space="preserve">
+    <value>%{0}</value>
+  </data>
+  <data name="ProgressUploading" xml:space="preserve">
+    <value>Yükleniyor…</value>
+  </data>
+  <data name="ProgressUploadingFile" xml:space="preserve">
+    <value>Yükleniyor: {0}</value>
+  </data>
+  <data name="ProgressUploadingFilePercent" xml:space="preserve">
+    <value>Yükleniyor: {0} (%{1})</value>
+  </data>
+  <data name="ReopenContinue" xml:space="preserve">
+    <value>Kaldığın yerden devam et (Google'daki son hal)</value>
+  </data>
+  <data name="ReopenDontAsk" xml:space="preserve">
+    <value>Bunu bir daha sorma</value>
+  </data>
+  <data name="ReopenMessage" xml:space="preserve">
+    <value>{0} Google'da düzenlenmiş ve bu değişiklikler bilgisayardaki dosyaya henüz kaydedilmemiş. Baştan başlarsanız eski kopya Drive'da kalır.</value>
+  </data>
+  <data name="ReopenStartOver" xml:space="preserve">
+    <value>Bilgisayardaki dosyayla baştan başla (yeni kopya yükle)</value>
+  </data>
+  <data name="ReopenTitle" xml:space="preserve">
+    <value>Google'daki kopya farklı</value>
+  </data>
+  <data name="RunningBody" xml:space="preserve">
+    <value>Menüye sistem tepsisindeki simgeden ulaşabilirsiniz.</value>
+  </data>
+  <data name="RunningTitle" xml:space="preserve">
+    <value>Nimbus çalışıyor</value>
+  </data>
+  <data name="SaveAlreadyCurrentBody" xml:space="preserve">
+    <value>{0} ile Google kopyası arasında kaydedilecek bir fark yok.</value>
+  </data>
+  <data name="SaveAlreadyCurrentTitle" xml:space="preserve">
+    <value>Dosya zaten güncel</value>
+  </data>
+  <data name="SaveAutoBody" xml:space="preserve">
+    <value>{0}, Google'daki sürümle güncellendi.</value>
+  </data>
+  <data name="SaveAutoTitle" xml:space="preserve">
+    <value>Otomatik kaydedildi</value>
+  </data>
+  <data name="SaveBackupNote" xml:space="preserve">
+    <value> Önceki sürüm yedeklendi.</value>
+  </data>
+  <data name="SaveConflictCopy" xml:space="preserve">
+    <value>Yanına kopya olarak kaydet</value>
+  </data>
+  <data name="SaveConflictExisting" xml:space="preserve">
+    <value>Bu klasörde {0} adlı bir dosya zaten var ve Nimbus'un kaydettiği sürümden farklı. Üzerine yazarsanız önceki sürüm yedeklenir.</value>
+  </data>
+  <data name="SaveConflictOriginal" xml:space="preserve">
+    <value>{0}, Google kopyası oluşturulduktan sonra bilgisayarda değiştirilmiş. Üzerine yazarsanız bu değişiklikler dosyada kalmaz; önceki sürüm yedeklenir.</value>
+  </data>
+  <data name="SaveConflictOverwrite" xml:space="preserve">
+    <value>Üzerine yaz</value>
+  </data>
+  <data name="SaveConflictTitle" xml:space="preserve">
+    <value>Bilgisayardaki dosya değişmiş</value>
+  </data>
+  <data name="SaveCopyBody" xml:space="preserve">
+    <value>Google'daki sürüm {0} olarak kaydedildi. Mevcut dosya değişmedi.</value>
+  </data>
+  <data name="SaveCopyTitle" xml:space="preserve">
+    <value>Kopya kaydedildi</value>
+  </data>
+  <data name="SaveCsvNote" xml:space="preserve">
+    <value> CSV yalnızca ilk sayfayı içerir.</value>
+  </data>
+  <data name="SaveDoneBody" xml:space="preserve">
+    <value>{0}, Google'daki sürümle güncellendi.{1}{2}</value>
+  </data>
+  <data name="SaveDoneTitle" xml:space="preserve">
+    <value>Bilgisayara kaydedildi</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>{0} kaydedilemedi. Dosya başka bir programda açık ya da disk dolu olabilir.</value>
+  </data>
+  <data name="SaveLegacyBody" xml:space="preserve">
+    <value>{0} eski bir biçim olduğu için Google'daki sürüm {1} olarak yanına kaydedildi. Eski dosya değişmedi.</value>
+  </data>
+  <data name="SaveLegacyTitle" xml:space="preserve">
+    <value>Yeni biçimde kaydedildi</value>
+  </data>
+  <data name="SaveNoPermission" xml:space="preserve">
+    <value>{0} kaydedilemedi: bu konuma yazma izni yok.</value>
+  </data>
+  <data name="SecretInvalid" xml:space="preserve">
+    <value>client_secret.json geçersiz. Dosyayı şablona göre doldurun.</value>
+  </data>
+  <data name="SecretMissing" xml:space="preserve">
+    <value>client_secret.json bulunamadı. Dosya, Nimbus.exe ile aynı klasörde olmalı.</value>
+  </data>
+  <data name="SessionExpiredBody" xml:space="preserve">
+    <value>Devam etmek için yeniden giriş yapın.</value>
+  </data>
+  <data name="SessionExpiredError" xml:space="preserve">
+    <value>Oturumunuz sona erdi. Yeniden giriş yapıp tekrar deneyin.</value>
+  </data>
+  <data name="SessionExpiredTitle" xml:space="preserve">
+    <value>Oturumunuz sona erdi</value>
+  </data>
+  <data name="SessionRefreshFailed" xml:space="preserve">
+    <value>Google oturumu yenilenemedi. Dosyayı yeniden açıp giriş yapın.</value>
+  </data>
+  <data name="SessionSignedOutBody" xml:space="preserve">
+    <value>Google hesabınızın bağlantısı kaldırıldı.</value>
+  </data>
+  <data name="SessionSignedOutOffline" xml:space="preserve">
+    <value>Bu bilgisayardan çıkış yapıldı, ancak Google'a ulaşılamadığı için izin hesabınızda duruyor.</value>
+  </data>
+  <data name="SessionSignedOutTitle" xml:space="preserve">
+    <value>Çıkış yapıldı</value>
+  </data>
+  <data name="SettingsAutoSaveBody" xml:space="preserve">
+    <value>Son 24 saatte açılan belgelerdeki Google düzenlemelerini bilgisayara yazar.</value>
+  </data>
+  <data name="SettingsAutoSaveTitle" xml:space="preserve">
+    <value>Otomatik geri kaydet</value>
+  </data>
+  <data name="SettingsAutoStartBody" xml:space="preserve">
+    <value>Oturum açınca Nimbus tepside çalışmaya başlar.</value>
+  </data>
+  <data name="SettingsAutoStartTitle" xml:space="preserve">
+    <value>Windows ile başlat</value>
+  </data>
+  <data name="SettingsBrowserChoose" xml:space="preserve">
+    <value>Seç…</value>
+  </data>
+  <data name="SettingsBrowserDefault" xml:space="preserve">
+    <value>Varsayılan</value>
+  </data>
+  <data name="SettingsBrowserDialogTitle" xml:space="preserve">
+    <value>Tarayıcı seçin</value>
+  </data>
+  <data name="SettingsBrowserFilter" xml:space="preserve">
+    <value>Uygulamalar (*.exe)|*.exe</value>
+  </data>
+  <data name="SettingsBrowserSystem" xml:space="preserve">
+    <value>Windows varsayılan tarayıcısı</value>
+  </data>
+  <data name="SettingsBrowserTitle" xml:space="preserve">
+    <value>Tarayıcı</value>
+  </data>
+  <data name="SettingsCleanupBody" xml:space="preserve">
+    <value>Kaç gündür değişmeyen dosyalar çöp kutusuna taşınsın?</value>
+  </data>
+  <data name="SettingsCleanupTitle" xml:space="preserve">
+    <value>Eski dosyaları temizle</value>
+  </data>
+  <data name="SettingsExplorerMenuBody" xml:space="preserve">
+    <value>Explorer menüsüne "Nimbus ile aç" ekler.</value>
+  </data>
+  <data name="SettingsExplorerMenuTitle" xml:space="preserve">
+    <value>Sağ tık menüsü</value>
+  </data>
+  <data name="SettingsFileTypesBody" xml:space="preserve">
+    <value>Office dosyalarını Nimbus ile açın.</value>
+  </data>
+  <data name="SettingsFileTypesLink" xml:space="preserve">
+    <value>Bağla…</value>
+  </data>
+  <data name="SettingsFileTypesTitle" xml:space="preserve">
+    <value>Dosya türleri</value>
+  </data>
+  <data name="SettingsFileTypesUnlink" xml:space="preserve">
+    <value>Bağlantıyı kaldır</value>
+  </data>
+  <data name="SettingsLanguageBody" xml:space="preserve">
+    <value>Nimbus'un dilini seçin.</value>
+  </data>
+  <data name="SettingsLanguageSystem" xml:space="preserve">
+    <value>Windows dili</value>
+  </data>
+  <data name="SettingsLanguageTitle" xml:space="preserve">
+    <value>Dil</value>
+  </data>
+  <data name="SettingsNotificationsTitle" xml:space="preserve">
+    <value>Bildirimler</value>
+  </data>
+  <data name="SettingsNotifyAutoSaved" xml:space="preserve">
+    <value>Otomatik kayıt güncellendi</value>
+  </data>
+  <data name="SettingsNotifyConflict" xml:space="preserve">
+    <value>Çakışma</value>
+  </data>
+  <data name="SettingsNotifyConflictBody" xml:space="preserve">
+    <value>Her zaman açık: seçiminiz olmadan dosya yazılmaz.</value>
+  </data>
+  <data name="SettingsNotifyErrors" xml:space="preserve">
+    <value>Hatalar</value>
+  </data>
+  <data name="SettingsNotifyErrorsBody" xml:space="preserve">
+    <value>Her zaman açık: başarısız bir işlemden haberiniz olur.</value>
+  </data>
+  <data name="SettingsNotifyLinkCopied" xml:space="preserve">
+    <value>Bağlantı kopyalandı</value>
+  </data>
+  <data name="SettingsNotifyOpened" xml:space="preserve">
+    <value>Açıldı ve önceki kopya</value>
+  </data>
+  <data name="SettingsNotifyProgress" xml:space="preserve">
+    <value>Yükleniyor ve ilerleme</value>
+  </data>
+  <data name="SettingsNotifySession" xml:space="preserve">
+    <value>Oturum düştü</value>
+  </data>
+  <data name="SettingsNotifySessionBody" xml:space="preserve">
+    <value>Her zaman açık: yeniden giriş yapılmadan eşitleme durur.</value>
+  </data>
+  <data name="SettingsReopenAsk" xml:space="preserve">
+    <value>Her seferinde sor</value>
+  </data>
+  <data name="SettingsReopenBody" xml:space="preserve">
+    <value>Dosya yeniden açıldığında ne yapılsın?</value>
+  </data>
+  <data name="SettingsReopenContinue" xml:space="preserve">
+    <value>Kaldığın yerden devam et</value>
+  </data>
+  <data name="SettingsReopenStartOver" xml:space="preserve">
+    <value>Baştan başla</value>
+  </data>
+  <data name="SettingsReopenTitle" xml:space="preserve">
+    <value>Google kopyası farklıysa</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Nimbus Ayarları</value>
+  </data>
+  <data name="SettingsUpdateAsk" xml:space="preserve">
+    <value>Sor</value>
+  </data>
+  <data name="SettingsUpdateAutomatic" xml:space="preserve">
+    <value>Otomatik güncelle</value>
+  </data>
+  <data name="SettingsUpdateDevBuild" xml:space="preserve">
+    <value>Sürüm {0}. Geliştirme derlemesi kendini güncellemez.</value>
+  </data>
+  <data name="SettingsUpdateOff" xml:space="preserve">
+    <value>Kapalı</value>
+  </data>
+  <data name="SettingsUpdateReleaseBuild" xml:space="preserve">
+    <value>Sürüm {0}. Yalnızca imzası doğrulanan sürümler kurulur.</value>
+  </data>
+  <data name="SettingsUpdateTitle" xml:space="preserve">
+    <value>Güncelleme</value>
+  </data>
+  <data name="ShareDialogBody" xml:space="preserve">
+    <value>{0} için bağlantıya sahip herkes belgeyi görüntüleyebilecek. Bu izni daha sonra Paylaşımı kapat ile kaldırabilirsiniz.</value>
+  </data>
+  <data name="ShareDialogPrimary" xml:space="preserve">
+    <value>Herkese aç ve kopyala</value>
+  </data>
+  <data name="ShareDialogTitle" xml:space="preserve">
+    <value>Bağlantıyı herkese aç</value>
+  </data>
+  <data name="SharingAlreadyOffBody" xml:space="preserve">
+    <value>{0} herkese açık değil.</value>
+  </data>
+  <data name="SharingAlreadyOffTitle" xml:space="preserve">
+    <value>Paylaşım zaten kapalı</value>
+  </data>
+  <data name="SharingStoppedBody" xml:space="preserve">
+    <value>{0}: bağlantıya sahip olanlar artık görüntüleyemez.</value>
+  </data>
+  <data name="SharingStoppedTitle" xml:space="preserve">
+    <value>Paylaşım kapatıldı</value>
+  </data>
+  <data name="SignInBody" xml:space="preserve">
+    <value>Dosyalar yalnızca kendi Google Drive'ınıza yüklenir. Nimbus, yalnızca kendi oluşturduğu dosyaları görebilir.</value>
+  </data>
+  <data name="SignInButton" xml:space="preserve">
+    <value>Google ile giriş yap</value>
+  </data>
+  <data name="SignInDeniedError" xml:space="preserve">
+    <value>Google girişi tamamlanamadı veya izin verilmedi.</value>
+  </data>
+  <data name="SignInHeadline" xml:space="preserve">
+    <value>Office dosyalarınızı Google'da açın</value>
+  </data>
+  <data name="SignInOpeningBody" xml:space="preserve">
+    <value>Giriş sayfası tarayıcınızda açılıyor.</value>
+  </data>
+  <data name="SignInOpeningTitle" xml:space="preserve">
+    <value>Google ile giriş yapın</value>
+  </data>
+  <data name="SignInTimeoutError" xml:space="preserve">
+    <value>Google girişi 5 dakika içinde tamamlanmadı. Yeniden deneyin.</value>
+  </data>
+  <data name="SignInWaiting" xml:space="preserve">
+    <value>Tarayıcıda giriş bekleniyor…</value>
+  </data>
+  <data name="TimeDaysAgo" xml:space="preserve">
+    <value>{0} gün önce</value>
+  </data>
+  <data name="TimeHourAgo" xml:space="preserve">
+    <value>1 saat önce</value>
+  </data>
+  <data name="TimeHoursAgo" xml:space="preserve">
+    <value>{0} saat önce</value>
+  </data>
+  <data name="TimeJustNow" xml:space="preserve">
+    <value>Az önce</value>
+  </data>
+  <data name="TimeMinuteAgo" xml:space="preserve">
+    <value>1 dakika önce</value>
+  </data>
+  <data name="TimeMinutesAgo" xml:space="preserve">
+    <value>{0} dakika önce</value>
+  </data>
+  <data name="TimeYesterday" xml:space="preserve">
+    <value>Dün</value>
+  </data>
+  <data name="UnexpectedError" xml:space="preserve">
+    <value>Beklenmeyen bir hata oluştu ({0}).</value>
+  </data>
+  <data name="UnsupportedFileType" xml:space="preserve">
+    <value>Desteklenmeyen dosya türü: {0}</value>
+  </data>
+  <data name="UpdateAssetMissing" xml:space="preserve">
+    <value>Yeni sürümde {0} bulunmuyor; güncelleme kurulmadı.</value>
+  </data>
+  <data name="UpdateAvailableBody" xml:space="preserve">
+    <value>Güncelleme kurulunca Nimbus kısa süreliğine kapanıp yeniden açılır.</value>
+  </data>
+  <data name="UpdateAvailableTitle" xml:space="preserve">
+    <value>Nimbus v{0} çıktı — güncellemek için tıkla</value>
+  </data>
+  <data name="UpdateChoiceAlways" xml:space="preserve">
+    <value>Her zaman otomatik güncelle</value>
+  </data>
+  <data name="UpdateChoiceLater" xml:space="preserve">
+    <value>Sonra</value>
+  </data>
+  <data name="UpdateChoiceNow" xml:space="preserve">
+    <value>Şimdi güncelle</value>
+  </data>
+  <data name="UpdateDoneBody" xml:space="preserve">
+    <value>Şu anki sürüm: {0}</value>
+  </data>
+  <data name="UpdateDoneTitle" xml:space="preserve">
+    <value>Nimbus güncellendi</value>
+  </data>
+  <data name="UpdateDownloadFailed" xml:space="preserve">
+    <value>Güncelleme indirilemedi. İnternet bağlantınızı kontrol edin.</value>
+  </data>
+  <data name="UpdateFolderNotWritable" xml:space="preserve">
+    <value>Nimbus klasörüne yazılamadığı için güncelleme kurulmadı.</value>
+  </data>
+  <data name="UpdateHashMismatch" xml:space="preserve">
+    <value>Güncellemenin SHA-256 özeti tutmadı; güncelleme kurulmadı.</value>
+  </data>
+  <data name="UpdateNoExeInPackage" xml:space="preserve">
+    <value>Güncelleme paketinde Nimbus.exe yok; güncelleme kurulmadı.</value>
+  </data>
+  <data name="UpdatePackageDamaged" xml:space="preserve">
+    <value>Güncelleme paketi bozuk; güncelleme kurulmadı.</value>
+  </data>
+  <data name="UpdateSignatureInvalid" xml:space="preserve">
+    <value>Güncellemenin imzası doğrulanamadı; güncelleme kurulmadı.</value>
+  </data>
+  <data name="UpdateVersionMismatch" xml:space="preserve">
+    <value>Güncellemenin sürüm bilgisi tutmadı; güncelleme kurulmadı.</value>
+  </data>
+  <data name="UpdateWindowTitle" xml:space="preserve">
+    <value>Yeni sürüm var</value>
+  </data>
+  <data name="UpdateWindowVersions" xml:space="preserve">
+    <value>Nimbus v{0} çıktı. Sizdeki sürüm: v{1}.</value>
+  </data>
+  <data name="UpdateWriteFailed" xml:space="preserve">
+    <value>Güncelleme dosyaları yazılamadığı için güncelleme kurulmadı.</value>
+  </data>
+</root>

@@ -12,6 +12,7 @@ internal sealed record TrayActions(
     Action LinkFileTypes,
     Action CleanOldFiles,
     Action OpenSettings,
+    Action ShowUpdate,
     Action<RecentFile> OpenRecent,
     Action<RecentFile> SaveToComputer,
     Action<RecentFile> CopyPrivateLink,
@@ -29,6 +30,9 @@ internal sealed class TrayIcon : IDisposable
     private readonly TaskbarIcon _icon;
     private readonly TrayActions _actions;
 
+    private MenuItem _update = null!;
+    private Separator _updateSeparator = null!;
+    private UpdateRow? _updateRow;
     private MenuItem _account = null!;
     private MenuItem _signIn = null!;
     private MenuItem _signOut = null!;
@@ -71,6 +75,12 @@ internal sealed class TrayIcon : IDisposable
         ApplyRecentFiles();
     }
 
+    public void SetUpdate(UpdateRow? row)
+    {
+        _updateRow = row;
+        ApplyUpdateRow();
+    }
+
     public void SetStatus(string? status)
     {
         var text = status ?? DefaultToolTip;
@@ -86,32 +96,50 @@ internal sealed class TrayIcon : IDisposable
     // Menü hiçbir pencerenin ağacında olmadığı için WPF tema kaynaklarını ona yansıtmaz; yeniden kurulması gerekir.
     private void OnThemeChanged(ApplicationTheme theme, System.Windows.Media.Color accent) => RebuildMenu();
 
-    private void RebuildMenu()
+    public void RebuildMenu()
     {
+        _update = CreateItem("", _actions.ShowUpdate);
+        _update.FontWeight = FontWeights.SemiBold;
+        _updateSeparator = new Separator();
         _account = new MenuItem { IsEnabled = false };
-        _signIn = CreateItem("Giriş yap", _actions.SignIn);
-        _signOut = CreateItem("Hesaptan çıkış yap", _actions.SignOut);
-        _recentMenu = new MenuItem { Header = "Son dosyalar" };
+        _signIn = CreateItem(Strings.MenuSignIn, _actions.SignIn);
+        _signOut = CreateItem(Strings.MenuSignOut, _actions.SignOut);
+        _recentMenu = new MenuItem { Header = Strings.MenuRecentFiles };
         _recentSeparator = new Separator();
 
         var menu = new ContextMenu();
+        menu.Items.Add(_update);
+        menu.Items.Add(_updateSeparator);
         menu.Items.Add(_account);
         menu.Items.Add(_signIn);
         menu.Items.Add(_signOut);
         menu.Items.Add(_recentSeparator);
         menu.Items.Add(_recentMenu);
         menu.Items.Add(new Separator());
-        menu.Items.Add(CreateItem("Dosya türlerini bağla…", _actions.LinkFileTypes));
-        menu.Items.Add(CreateItem("Eski dosyaları temizle", _actions.CleanOldFiles));
-        menu.Items.Add(CreateItem("Ayarlar…", _actions.OpenSettings));
+        menu.Items.Add(CreateItem(Strings.MenuLinkFileTypes, _actions.LinkFileTypes));
+        menu.Items.Add(CreateItem(Strings.MenuCleanOldFiles, _actions.CleanOldFiles));
+        menu.Items.Add(CreateItem(Strings.MenuSettings, _actions.OpenSettings));
         menu.Items.Add(new Separator());
-        menu.Items.Add(CreateItem("Nimbus'u kapat", _actions.Exit));
+        menu.Items.Add(CreateItem(Strings.MenuExit, _actions.Exit));
 
+        ApplyUpdateRow();
         ApplyAccountState();
         ApplyRecentFiles();
         // "2 saat önce" gibi metinler menü her açıldığında tazelenir.
         menu.Opened += (_, _) => ApplyRecentFiles();
         _icon.ContextMenu = menu;
+    }
+
+    private void ApplyUpdateRow()
+    {
+        var visibility = _updateRow is null ? Visibility.Collapsed : Visibility.Visible;
+        _update.Visibility = visibility;
+        _updateSeparator.Visibility = visibility;
+        if (_updateRow is not { } row)
+            return;
+
+        _update.Header = string.Format(row.Installing ? Strings.MenuUpdating : Strings.MenuUpdateAvailable, row.Version);
+        _update.IsEnabled = !row.Installing;
     }
 
     private void ApplyRecentFiles()
@@ -126,15 +154,15 @@ internal sealed class TrayIcon : IDisposable
     {
         var item = new MenuItem { Header = CreateRecentHeader(file) };
 
-        var copyLink = new MenuItem { Header = "Bağlantıyı kopyala" };
-        copyLink.Items.Add(CreateItem("Sadece benim için", () => _actions.CopyPrivateLink(file)));
-        copyLink.Items.Add(CreateItem("Bağlantıya sahip herkes görüntüleyebilir…", () => _actions.CopyPublicLink(file)));
+        var copyLink = new MenuItem { Header = Strings.MenuCopyLink };
+        copyLink.Items.Add(CreateItem(Strings.MenuCopyLinkPrivate, () => _actions.CopyPrivateLink(file)));
+        copyLink.Items.Add(CreateItem(Strings.MenuCopyLinkAnyone, () => _actions.CopyPublicLink(file)));
 
-        item.Items.Add(CreateItem("Aç", () => _actions.OpenRecent(file)));
-        item.Items.Add(CreateItem("Bilgisayara kaydet", () => _actions.SaveToComputer(file)));
+        item.Items.Add(CreateItem(Strings.MenuOpen, () => _actions.OpenRecent(file)));
+        item.Items.Add(CreateItem(Strings.MenuSaveToComputer, () => _actions.SaveToComputer(file)));
         item.Items.Add(copyLink);
-        item.Items.Add(CreateItem("Paylaşımı kapat", () => _actions.StopSharing(file)));
-        item.Items.Add(CreateItem("Klasörde göster", () => _actions.ShowInFolder(file)));
+        item.Items.Add(CreateItem(Strings.MenuStopSharing, () => _actions.StopSharing(file)));
+        item.Items.Add(CreateItem(Strings.MenuShowInFolder, () => _actions.ShowInFolder(file)));
 
         // Alt menüsü olan öğe Click olayı üretmez; satırın kendisine tıklamak belgeyi açar.
         item.PreviewMouseLeftButtonUp += (_, e) =>
@@ -192,7 +220,7 @@ internal sealed class TrayIcon : IDisposable
 
     private void ApplyAccountState()
     {
-        _account.Header = _signedIn ? _email ?? "Giriş yapıldı" : "Giriş yapılmadı";
+        _account.Header = _signedIn ? _email ?? Strings.AccountSignedIn : Strings.AccountNotSignedIn;
         _signIn.Visibility = _signedIn ? Visibility.Collapsed : Visibility.Visible;
         _signOut.Visibility = _signedIn ? Visibility.Visible : Visibility.Collapsed;
         _recentMenu.Visibility = _signOut.Visibility;

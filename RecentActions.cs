@@ -22,7 +22,7 @@ internal sealed class RecentActions(Session session, Notifier notifier)
         using var drive = new DriveUploader(await session.GetCredentialAsync());
         var state = await GetStateAsync(drive, file);
         CopyToClipboard(state.Link);
-        notifier.ShowOptional(OptionalNotification.LinkCopied, "Bağlantı kopyalandı", $"{Path.GetFileName(file.Path)}: yalnızca erişim izni olanlar açabilir.");
+        notifier.ShowOptional(OptionalNotification.LinkCopied, Strings.LinkCopiedTitle, string.Format(Strings.LinkCopiedPrivate, Path.GetFileName(file.Path)));
     }
 
     public async Task CopyPublicLinkAsync(RecentFile file)
@@ -30,12 +30,12 @@ internal sealed class RecentActions(Session session, Notifier notifier)
         var name = Path.GetFileName(file.Path);
         var dialog = new Wpf.Ui.Controls.MessageBox
         {
-            Title = "Bağlantıyı herkese aç",
-            Content = $"{name} için bağlantıya sahip herkes belgeyi görüntüleyebilecek. Bu izni daha sonra Google Drive'daki paylaşım ayarlarından kaldırabilirsiniz.",
+            Title = Strings.ShareDialogTitle,
+            Content = string.Format(Strings.ShareDialogBody, name),
             Width = ShareDialogWidth,
             MaxWidth = ShareDialogWidth,
-            PrimaryButtonText = "Herkese aç ve kopyala",
-            CloseButtonText = "Vazgeç",
+            PrimaryButtonText = Strings.ShareDialogPrimary,
+            CloseButtonText = Strings.Cancel,
         };
         if (await dialog.ShowDialogAsync() != Wpf.Ui.Controls.MessageBoxResult.Primary)
             return;
@@ -44,7 +44,7 @@ internal sealed class RecentActions(Session session, Notifier notifier)
         var state = await GetStateAsync(drive, file);
         await drive.ShareWithAnyoneAsync(file.FileId);
         CopyToClipboard(state.Link);
-        notifier.ShowOptional(OptionalNotification.LinkCopied, "Bağlantı kopyalandı", $"{name}: bağlantıya sahip herkes görüntüleyebilir.");
+        notifier.ShowOptional(OptionalNotification.LinkCopied, Strings.LinkCopiedTitle, string.Format(Strings.LinkCopiedAnyone, name));
     }
 
     public async Task StopSharingAsync(RecentFile file)
@@ -53,9 +53,9 @@ internal sealed class RecentActions(Session session, Notifier notifier)
         await GetStateAsync(drive, file);
         var name = Path.GetFileName(file.Path);
         if (await drive.StopSharingWithAnyoneAsync(file.FileId))
-            notifier.ShowInfo("Paylaşım kapatıldı", $"{name}: bağlantıya sahip olanlar artık görüntüleyemez.");
+            notifier.ShowInfo(Strings.SharingStoppedTitle, string.Format(Strings.SharingStoppedBody, name));
         else
-            notifier.ShowInfo("Paylaşım zaten kapalı", $"{name} herkese açık değil.");
+            notifier.ShowInfo(Strings.SharingAlreadyOffTitle, string.Format(Strings.SharingAlreadyOffBody, name));
     }
 
     public static void ShowInFolder(RecentFile file)
@@ -68,14 +68,14 @@ internal sealed class RecentActions(Session session, Notifier notifier)
 
         var folder = Path.GetDirectoryName(file.Path)!;
         if (!Directory.Exists(folder))
-            throw new UserMessageException($"{Path.GetFileName(file.Path)} dosyasının klasörü bulunamadı: {folder}");
+            throw new UserMessageException(string.Format(Strings.FolderNotFound, Path.GetFileName(file.Path), folder));
 
         Process.Start("explorer.exe", $"\"{folder}\"");
     }
 
     private static async Task<GoogleState> GetStateAsync(DriveUploader drive, RecentFile file) =>
         await drive.GetStateAsync(file.FileId)
-            ?? throw new UserMessageException($"{Path.GetFileName(file.Path)} dosyasının Google kopyası bulunamadı. Silinmiş, çöp kutusuna taşınmış ya da başka bir hesapta olabilir.");
+            ?? throw new UserMessageException(string.Format(Strings.GoogleCopyMissing, Path.GetFileName(file.Path)));
 
     private static void CopyToClipboard(string text)
     {
@@ -86,7 +86,7 @@ internal sealed class RecentActions(Session session, Notifier notifier)
         }
         catch (ExternalException)
         {
-            throw new UserMessageException("Pano başka bir program tarafından kullanılıyor. Yeniden deneyin.");
+            throw new UserMessageException(Strings.ClipboardBusy);
         }
     }
 }

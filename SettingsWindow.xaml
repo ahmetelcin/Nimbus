@@ -3,7 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    Title="Nimbus Ayarları"
+    xmlns:local="clr-namespace:Nimbus"
+    Title="{local:Loc SettingsTitle}"
     Width="580"
     Height="630"
     Icon="Assets/Nimbus.ico"
@@ -18,28 +19,28 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Title="Nimbus Ayarları" ShowMaximize="False" ShowMinimize="False" />
+        <ui:TitleBar Title="{local:Loc SettingsTitle}" ShowMaximize="False" ShowMinimize="False" />
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24,8,24,24">
             <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon Globe24}">
                 <ui:CardControl.Header>
                     <StackPanel>
-                        <ui:TextBlock FontTypography="BodyStrong" Text="Tarayıcı" />
+                        <ui:TextBlock FontTypography="BodyStrong" Text="{local:Loc SettingsBrowserTitle}" />
                         <ui:TextBlock x:Name="BrowserText" Appearance="Secondary" TextTrimming="CharacterEllipsis" />
                     </StackPanel>
                 </ui:CardControl.Header>
                 <StackPanel Orientation="Horizontal">
-                    <ui:Button Click="OnChooseBrowserClick" Content="Seç…" />
-                    <ui:Button x:Name="DefaultBrowserButton" Margin="8,0,0,0" Click="OnDefaultBrowserClick" Content="Varsayılan" />
+                    <ui:Button Click="OnChooseBrowserClick" Content="{local:Loc SettingsBrowserChoose}" />
+                    <ui:Button x:Name="DefaultBrowserButton" Margin="8,0,0,0" Click="OnDefaultBrowserClick" Content="{local:Loc SettingsBrowserDefault}" />
                 </StackPanel>
             </ui:CardControl>
 
             <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon ArrowSync24}">
                 <ui:CardControl.Header>
                     <StackPanel>
-                        <ui:TextBlock FontTypography="BodyStrong" Text="Otomatik geri kaydet" />
-                        <ui:TextBlock Appearance="Secondary" Text="Son 24 saatte açılan belgelerdeki Google düzenlemelerini bilgisayara yazar." TextWrapping="Wrap" />
+                        <ui:TextBlock FontTypography="BodyStrong" Text="{local:Loc SettingsAutoSaveTitle}" />
+                        <ui:TextBlock Appearance="Secondary" Text="{local:Loc SettingsAutoSaveBody}" TextWrapping="Wrap" />
                     </StackPanel>
                 </ui:CardControl.Header>
                 <ui:ToggleSwitch x:Name="AutoSaveSwitch" Click="OnAutoSaveClick" />
@@ -48,22 +49,22 @@
             <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon DocumentSync24}">
                 <ui:CardControl.Header>
                     <StackPanel>
-                        <ui:TextBlock FontTypography="BodyStrong" Text="Google kopyası farklıysa" />
-                        <ui:TextBlock Appearance="Secondary" Text="Dosya yeniden açıldığında ne yapılsın?" TextWrapping="Wrap" />
+                        <ui:TextBlock FontTypography="BodyStrong" Text="{local:Loc SettingsReopenTitle}" />
+                        <ui:TextBlock Appearance="Secondary" Text="{local:Loc SettingsReopenBody}" TextWrapping="Wrap" />
                     </StackPanel>
                 </ui:CardControl.Header>
                 <ComboBox x:Name="ReopenChoiceBox" Width="230" SelectionChanged="OnReopenChoiceChanged">
-                    <ComboBoxItem Content="Her seferinde sor" />
-                    <ComboBoxItem Content="Kaldığın yerden devam et" />
-                    <ComboBoxItem Content="Baştan başla" />
+                    <ComboBoxItem Content="{local:Loc SettingsReopenAsk}" />
+                    <ComboBoxItem Content="{local:Loc SettingsReopenContinue}" />
+                    <ComboBoxItem Content="{local:Loc SettingsReopenStartOver}" />
                 </ComboBox>
             </ui:CardControl>
 
             <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon Delete24}">
                 <ui:CardControl.Header>
                     <StackPanel>
-                        <ui:TextBlock FontTypography="BodyStrong" Text="Eski dosyaları temizle" />
-                        <ui:TextBlock Appearance="Secondary" Text="Kaç gündür değişmeyen dosyalar çöp kutusuna taşınsın?" TextWrapping="Wrap" />
+                        <ui:TextBlock FontTypography="BodyStrong" Text="{local:Loc SettingsCleanupTitle}" />
+                        <ui:TextBlock Appearance="Secondary" Text="{local:Loc SettingsCleanupBody}" TextWrapping="Wrap" />
                     </StackPanel>
                 </ui:CardControl.Header>
                 <ui:NumberBox
@@ -79,8 +80,8 @@
             <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon Power24}">
                 <ui:CardControl.Header>
                     <StackPanel>
-                        <ui:TextBlock FontTypography="BodyStrong" Text="Windows ile başlat" />
-                        <ui:TextBlock Appearance="Secondary" Text="Oturum açınca Nimbus tepside çalışmaya başlar." TextWrapping="Wrap" />
+                        <ui:TextBlock FontTypography="BodyStrong" Text="{local:Loc SettingsAutoStartTitle}" />
+                        <ui:TextBlock Appearance="Secondary" Text="{local:Loc SettingsAutoStartBody}" TextWrapping="Wrap" />
                     </StackPanel>
                 </ui:CardControl.Header>
                 <ui:ToggleSwitch x:Name="AutoStartSwitch" Click="OnAutoStartClick" />
@@ -89,41 +90,55 @@
             <ui:CardControl Margin="0,0,0,8" Icon="{ui:SymbolIcon Document24}">
                 <ui:CardControl.Header>
                     <StackPanel>
-                        <ui:TextBlock FontTypography="BodyStrong" Text="Dosya türleri" />
-                        <ui:TextBlock Appearance="Secondary" Text="Office dosyalarını Nimbus ile açın." TextWrapping="Wrap" />
+                        <ui:TextBlock FontTypography="BodyStrong" Text="{local:Loc SettingsFileTypesTitle}" />
+                        <ui:TextBlock Appearance="Secondary" Text="{local:Loc SettingsFileTypesBody}" TextWrapping="Wrap" />
                     </StackPanel>
                 </ui:CardControl.Header>
                 <StackPanel Orientation="Horizontal">
-                    <ui:Button Click="OnLinkFileTypesClick" Content="Bağla…" />
-                    <ui:Button Margin="8,0,0,0" Click="OnUnlinkFileTypesClick" Content="Bağlantıyı kaldır" />
+                    <ui:Button Click="OnLinkFileTypesClick" Content="{local:Loc SettingsFileTypesLink}" />
+                    <ui:Button Margin="8,0,0,0" Click="OnUnlinkFileTypesClick" Content="{local:Loc SettingsFileTypesUnlink}" />
                 </StackPanel>
             </ui:CardControl>
 
             <ui:CardControl Icon="{ui:SymbolIcon CursorClick24}">
                 <ui:CardControl.Header>
                     <StackPanel>
-                        <ui:TextBlock FontTypography="BodyStrong" Text="Sağ tık menüsü" />
-                        <ui:TextBlock Appearance="Secondary" Text="Explorer menüsüne &quot;Nimbus ile aç&quot; ekler." TextWrapping="Wrap" />
+                        <ui:TextBlock FontTypography="BodyStrong" Text="{local:Loc SettingsExplorerMenuTitle}" />
+                        <ui:TextBlock Appearance="Secondary" Text="{local:Loc SettingsExplorerMenuBody}" TextWrapping="Wrap" />
                     </StackPanel>
                 </ui:CardControl.Header>
                 <ui:ToggleSwitch x:Name="ExplorerMenuSwitch" Click="OnExplorerMenuClick" />
             </ui:CardControl>
 
+            <ui:CardControl Margin="0,8,0,0" Icon="{ui:SymbolIcon LocalLanguage24}">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock FontTypography="BodyStrong" Text="{local:Loc SettingsLanguageTitle}" />
+                        <ui:TextBlock Appearance="Secondary" Text="{local:Loc SettingsLanguageBody}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ComboBox x:Name="LanguageBox" Width="230" SelectionChanged="OnLanguageChanged">
+                    <ComboBoxItem Content="{local:Loc SettingsLanguageSystem}" />
+                    <ComboBoxItem Content="Türkçe" />
+                    <ComboBoxItem Content="English" />
+                </ComboBox>
+            </ui:CardControl>
+
             <ui:CardControl Margin="0,8,0,0" Icon="{ui:SymbolIcon ArrowDownload24}">
                 <ui:CardControl.Header>
                     <StackPanel>
-                        <ui:TextBlock FontTypography="BodyStrong" Text="Güncelleme" />
+                        <ui:TextBlock FontTypography="BodyStrong" Text="{local:Loc SettingsUpdateTitle}" />
                         <ui:TextBlock x:Name="UpdateText" Appearance="Secondary" TextWrapping="Wrap" />
                     </StackPanel>
                 </ui:CardControl.Header>
                 <ComboBox x:Name="UpdateModeBox" Width="230" SelectionChanged="OnUpdateModeChanged">
-                    <ComboBoxItem Content="Sor" />
-                    <ComboBoxItem Content="Otomatik güncelle" />
-                    <ComboBoxItem Content="Kapalı" />
+                    <ComboBoxItem Content="{local:Loc SettingsUpdateAsk}" />
+                    <ComboBoxItem Content="{local:Loc SettingsUpdateAutomatic}" />
+                    <ComboBoxItem Content="{local:Loc SettingsUpdateOff}" />
                 </ComboBox>
             </ui:CardControl>
 
-            <ui:TextBlock Margin="0,16,0,8" FontTypography="BodyStrong" Text="Bildirimler" />
+            <ui:TextBlock Margin="0,16,0,8" FontTypography="BodyStrong" Text="{local:Loc SettingsNotificationsTitle}" />
 
             <ui:Card>
                 <StackPanel>
@@ -132,7 +147,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <ui:TextBlock VerticalAlignment="Center" Text="Yükleniyor ve ilerleme" TextWrapping="Wrap" />
+                        <ui:TextBlock VerticalAlignment="Center" Text="{local:Loc SettingsNotifyProgress}" TextWrapping="Wrap" />
                         <ui:ToggleSwitch x:Name="ProgressSwitch" Grid.Column="1" Click="OnNotificationClick" Tag="Progress" />
                     </Grid>
                     <Grid Margin="0,0,0,12">
@@ -140,7 +155,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <ui:TextBlock VerticalAlignment="Center" Text="Açıldı ve önceki kopya" TextWrapping="Wrap" />
+                        <ui:TextBlock VerticalAlignment="Center" Text="{local:Loc SettingsNotifyOpened}" TextWrapping="Wrap" />
                         <ui:ToggleSwitch x:Name="OpenedSwitch" Grid.Column="1" Click="OnNotificationClick" Tag="Opened" />
                     </Grid>
                     <Grid Margin="0,0,0,12">
@@ -148,7 +163,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <ui:TextBlock VerticalAlignment="Center" Text="Otomatik kayıt güncellendi" TextWrapping="Wrap" />
+                        <ui:TextBlock VerticalAlignment="Center" Text="{local:Loc SettingsNotifyAutoSaved}" TextWrapping="Wrap" />
                         <ui:ToggleSwitch x:Name="AutoSavedSwitch" Grid.Column="1" Click="OnNotificationClick" Tag="AutoSaved" />
                     </Grid>
                     <Grid Margin="0,0,0,16">
@@ -156,7 +171,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <ui:TextBlock VerticalAlignment="Center" Text="Bağlantı kopyalandı" TextWrapping="Wrap" />
+                        <ui:TextBlock VerticalAlignment="Center" Text="{local:Loc SettingsNotifyLinkCopied}" TextWrapping="Wrap" />
                         <ui:ToggleSwitch x:Name="LinkCopiedSwitch" Grid.Column="1" Click="OnNotificationClick" Tag="LinkCopied" />
                     </Grid>
 
@@ -166,8 +181,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <ui:TextBlock Appearance="Disabled" Text="Çakışma" />
-                            <ui:TextBlock Appearance="Tertiary" FontSize="12" Text="Her zaman açık: seçiminiz olmadan dosya yazılmaz." TextWrapping="Wrap" />
+                            <ui:TextBlock Appearance="Disabled" Text="{local:Loc SettingsNotifyConflict}" />
+                            <ui:TextBlock Appearance="Tertiary" FontSize="12" Text="{local:Loc SettingsNotifyConflictBody}" TextWrapping="Wrap" />
                         </StackPanel>
                         <ui:ToggleSwitch Grid.Column="1" IsChecked="True" IsEnabled="False" />
                     </Grid>
@@ -177,8 +192,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <ui:TextBlock Appearance="Disabled" Text="Oturum düştü" />
-                            <ui:TextBlock Appearance="Tertiary" FontSize="12" Text="Her zaman açık: yeniden giriş yapılmadan eşitleme durur." TextWrapping="Wrap" />
+                            <ui:TextBlock Appearance="Disabled" Text="{local:Loc SettingsNotifySession}" />
+                            <ui:TextBlock Appearance="Tertiary" FontSize="12" Text="{local:Loc SettingsNotifySessionBody}" TextWrapping="Wrap" />
                         </StackPanel>
                         <ui:ToggleSwitch Grid.Column="1" IsChecked="True" IsEnabled="False" />
                     </Grid>
@@ -188,8 +203,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <ui:TextBlock Appearance="Disabled" Text="Hatalar" />
-                            <ui:TextBlock Appearance="Tertiary" FontSize="12" Text="Her zaman açık: başarısız bir işlemden haberiniz olur." TextWrapping="Wrap" />
+                            <ui:TextBlock Appearance="Disabled" Text="{local:Loc SettingsNotifyErrors}" />
+                            <ui:TextBlock Appearance="Tertiary" FontSize="12" Text="{local:Loc SettingsNotifyErrorsBody}" TextWrapping="Wrap" />
                         </StackPanel>
                         <ui:ToggleSwitch Grid.Column="1" IsChecked="True" IsEnabled="False" />
                     </Grid>

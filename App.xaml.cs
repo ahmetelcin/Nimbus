@@ -21,6 +21,7 @@ public partial class App : Application
     private Session _session = null!;
     private FileOpener _opener = null!;
     private SaveBack _saveBack = null!;
+    private RecentActions _recent = null!;
     private AutoSync _autoSync = null!;
     private TrayIcon _tray = null!;
     private SignInWindow? _signInWindow;
@@ -41,6 +42,7 @@ public partial class App : Application
         _session = new Session(_notifier);
         _opener = new FileOpener(_session, _notifier);
         _saveBack = new SaveBack(_session, _notifier);
+        _recent = new RecentActions(_session, _notifier);
         // Bildirim düğmesi başka iş parçacığından gelir; iş kuyruğu UI iş parçacığına aittir.
         _autoSync = new AutoSync(_session, _notifier, run => Dispatcher.InvokeAsync(() => Enqueue(run)).Task.Unwrap());
         _tray = new TrayIcon(new TrayActions(
@@ -49,7 +51,15 @@ public partial class App : Application
             LinkFileTypes: LinkFileTypes,
             CleanOldFiles: () => _ = Enqueue(CleanOldFilesAsync),
             OpenSettings: ShowSettingsWindow,
+            OpenRecent: file => _ = Enqueue(() => _recent.OpenAsync(file)),
             SaveToComputer: file => _ = Enqueue(() => _saveBack.SaveAsync(file)),
+            CopyPrivateLink: file => _ = Enqueue(() => _recent.CopyPrivateLinkAsync(file)),
+            CopyPublicLink: file => _ = Enqueue(() => _recent.CopyPublicLinkAsync(file)),
+            ShowInFolder: file => _ = Enqueue(() =>
+            {
+                RecentActions.ShowInFolder(file);
+                return Task.CompletedTask;
+            }),
             Exit: ExitApp));
         RefreshRecentFiles();
 

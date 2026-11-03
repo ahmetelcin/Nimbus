@@ -108,6 +108,87 @@
                 </ui:CardControl.Header>
                 <ui:ToggleSwitch x:Name="ExplorerMenuSwitch" Click="OnExplorerMenuClick" />
             </ui:CardControl>
+
+            <ui:TextBlock Margin="0,16,0,8" FontTypography="BodyStrong" Text="Bildirimler" />
+
+            <ui:Card>
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ui:TextBlock VerticalAlignment="Center" Text="Yükleniyor ve ilerleme" TextWrapping="Wrap" />
+                        <ui:ToggleSwitch x:Name="ProgressSwitch" Grid.Column="1" Click="OnNotificationClick" Tag="Progress" />
+                    </Grid>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ui:TextBlock VerticalAlignment="Center" Text="Açıldı ve önceki kopya" TextWrapping="Wrap" />
+                        <ui:ToggleSwitch x:Name="OpenedSwitch" Grid.Column="1" Click="OnNotificationClick" Tag="Opened" />
+                    </Grid>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ui:TextBlock VerticalAlignment="Center" Text="Otomatik kayıt güncellendi" TextWrapping="Wrap" />
+                        <ui:ToggleSwitch x:Name="AutoSavedSwitch" Grid.Column="1" Click="OnNotificationClick" Tag="AutoSaved" />
+                    </Grid>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ui:TextBlock VerticalAlignment="Center" Text="Bağlantı kopyalandı" TextWrapping="Wrap" />
+                        <ui:ToggleSwitch x:Name="LinkCopiedSwitch" Grid.Column="1" Click="OnNotificationClick" Tag="LinkCopied" />
+                    </Grid>
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ui:TextBlock VerticalAlignment="Center" Text="Yeni sürüm" TextWrapping="Wrap" />
+                        <ui:ToggleSwitch x:Name="NewVersionSwitch" Grid.Column="1" Click="OnNotificationClick" Tag="NewVersion" />
+                    </Grid>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <ui:TextBlock Appearance="Disabled" Text="Çakışma" />
+                            <ui:TextBlock Appearance="Tertiary" FontSize="12" Text="Her zaman açık: seçiminiz olmadan dosya yazılmaz." TextWrapping="Wrap" />
+                        </StackPanel>
+                        <ui:ToggleSwitch Grid.Column="1" IsChecked="True" IsEnabled="False" />
+                    </Grid>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <ui:TextBlock Appearance="Disabled" Text="Oturum düştü" />
+                            <ui:TextBlock Appearance="Tertiary" FontSize="12" Text="Her zaman açık: yeniden giriş yapılmadan eşitleme durur." TextWrapping="Wrap" />
+                        </StackPanel>
+                        <ui:ToggleSwitch Grid.Column="1" IsChecked="True" IsEnabled="False" />
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <ui:TextBlock Appearance="Disabled" Text="Hatalar" />
+                            <ui:TextBlock Appearance="Tertiary" FontSize="12" Text="Her zaman açık: başarısız bir işlemden haberiniz olur." TextWrapping="Wrap" />
+                        </StackPanel>
+                        <ui:ToggleSwitch Grid.Column="1" IsChecked="True" IsEnabled="False" />
+                    </Grid>
+                </StackPanel>
+            </ui:Card>
         </StackPanel>
         </ScrollViewer>
     </Grid>

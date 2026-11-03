@@ -60,7 +60,7 @@ internal sealed class FileOpener(Session session, Notifier notifier)
             }
             else if (UploadHistory.FindUnchangedCopy(path) is not null)
             {
-                notifier.ShowInfo("Önceki kopya açılıyor", $"{Path.GetFileName(path)} değişmediği için yeniden yüklenmedi.");
+                notifier.ShowOptional(OptionalNotification.Opened, "Önceki kopya açılıyor", $"{Path.GetFileName(path)} değişmediği için yeniden yüklenmedi.");
                 UploadHistory.MarkOpened(path);
                 return state.Link;
             }
@@ -96,7 +96,7 @@ internal sealed class FileOpener(Session session, Notifier notifier)
         return window.Choice;
     }
 
-    private static void OpenInBrowser(string link)
+    internal static void OpenInBrowser(string link)
     {
         if (AppSettings.Load().BrowserPath is { } browser && File.Exists(browser))
         {

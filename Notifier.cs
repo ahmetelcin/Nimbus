@@ -26,6 +26,7 @@ internal sealed class Notifier
     private readonly ToastNotifier _notifier;
     private readonly ConcurrentDictionary<string, ToastNotification> _conflictToasts = new();
     private string? _uploadingFile;
+    private bool _progressToastShown;
     private uint _sequence;
 
     public Notifier()
@@ -39,9 +40,18 @@ internal sealed class Notifier
     public void ShowInfo(string title, string message) =>
         TryShow(CreateTextToast(title, message));
 
-    // Aynı belge için önceki bildirimin yerine geçer; düzenleme sürerken bildirimler birikmez.
-    public void ShowQuietInfo(string key, string title, string message)
+    public void ShowOptional(OptionalNotification kind, string title, string message)
     {
+        if (IsAllowed(kind))
+            ShowInfo(title, message);
+    }
+
+    // Aynı belge için önceki bildirimin yerine geçer; düzenleme sürerken bildirimler birikmez.
+    public void ShowAutoSaved(string key, string title, string message)
+    {
+        if (!IsAllowed(OptionalNotification.AutoSaved))
+            return;
+
         var toast = CreateTextToast(title, message, silent: true);
         toast.Tag = TagFor("saved", key);
         TryShow(toast);
@@ -95,7 +105,13 @@ internal sealed class Notifier
 
     private void ShowProgressToast(string fileName, string title, NotificationData data)
     {
+        // Bildirim kapalıysa ilerleme yine tepsi simgesinin ipucunda görünür.
+        StatusChanged?.Invoke(title);
         _uploadingFile = fileName;
+        _progressToastShown = IsAllowed(OptionalNotification.Progress);
+        if (!_progressToastShown)
+            return;
+
         _sequence = 0;
         data.SequenceNumber = ++_sequence;
 
@@ -123,7 +139,6 @@ internal sealed class Notifier
             Data = data,
         };
         TryShow(toast);
-        StatusChanged?.Invoke(title);
     }
 
     // Yükleme iş parçacığından çağrılabilir.
@@ -132,13 +147,16 @@ internal sealed class Notifier
         if (_uploadingFile is not { } fileName)
             return;
 
-        try
+        if (_progressToastShown)
         {
-            _notifier.Update(CreateProgressData(fraction), ProgressTag, Group);
-        }
-        catch (COMException)
-        {
-            // İlerleme bilgisi gösterilemezse yükleme yine sürer.
+            try
+            {
+                _notifier.Update(CreateProgressData(fraction), ProgressTag, Group);
+            }
+            catch (COMException)
+            {
+                // İlerleme bilgisi gösterilemezse yükleme yine sürer.
+            }
         }
 
         StatusChanged?.Invoke(fraction is { } f
@@ -172,6 +190,8 @@ internal sealed class Notifier
         data.Values["progressStatus"] = status ?? (fraction is null ? "Dönüştürülüyor…" : "Yükleniyor…");
         return data;
     }
+
+    private static bool IsAllowed(OptionalNotification kind) => !AppSettings.Load().DisabledNotifications.Contains(kind);
 
     private static string TagFor(string kind, string key) => $"{kind}-{key.GetHashCode():X8}";
 

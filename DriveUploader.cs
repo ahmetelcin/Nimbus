@@ -7,6 +7,7 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Upload;
 using DriveFile = Google.Apis.Drive.v3.Data.File;
+using Permission = Google.Apis.Drive.v3.Data.Permission;
 
 namespace Nimbus;
 
@@ -82,6 +83,9 @@ internal sealed class DriveUploader(UserCredential credential) : IDisposable
                 file.CreatedTimeDateTimeOffset?.UtcTicks ?? 0,
                 file.ModifiedTimeDateTimeOffset?.UtcTicks ?? 0);
     }
+
+    public async Task ShareWithAnyoneAsync(string fileId) =>
+        await _service.Permissions.Create(new Permission { Type = "anyone", Role = "reader" }, fileId).ExecuteAsync();
 
     public async Task ExportToFileAsync(string fileId, string mimeType, string destination)
     {

@@ -12,7 +12,11 @@ internal sealed record TrayActions(
     Action LinkFileTypes,
     Action CleanOldFiles,
     Action OpenSettings,
+    Action<RecentFile> OpenRecent,
     Action<RecentFile> SaveToComputer,
+    Action<RecentFile> CopyPrivateLink,
+    Action<RecentFile> CopyPublicLink,
+    Action<RecentFile> ShowInFolder,
     Action Exit);
 
 internal sealed class TrayIcon : IDisposable
@@ -104,6 +108,8 @@ internal sealed class TrayIcon : IDisposable
 
         ApplyAccountState();
         ApplyRecentFiles();
+        // "2 saat önce" gibi metinler menü her açıldığında tazelenir.
+        menu.Opened += (_, _) => ApplyRecentFiles();
         _icon.ContextMenu = menu;
     }
 
@@ -117,18 +123,62 @@ internal sealed class TrayIcon : IDisposable
 
     private MenuItem CreateRecentItem(RecentFile file)
     {
-        var item = new MenuItem
-        {
-            // Düz metin başlıkta WPF alt çizgiyi kısayol sayıp dosya adından siler.
-            Header = new TextBlock
-            {
-                Text = Path.GetFileName(file.Path),
-                MaxWidth = MaxFileNameWidth,
-                TextTrimming = TextTrimming.CharacterEllipsis,
-            },
-        };
+        var item = new MenuItem { Header = CreateRecentHeader(file) };
+
+        var copyLink = new MenuItem { Header = "Bağlantıyı kopyala" };
+        copyLink.Items.Add(CreateItem("Sadece benim için", () => _actions.CopyPrivateLink(file)));
+        copyLink.Items.Add(CreateItem("Bağlantıya sahip herkes görüntüleyebilir…", () => _actions.CopyPublicLink(file)));
+
+        item.Items.Add(CreateItem("Aç", () => _actions.OpenRecent(file)));
         item.Items.Add(CreateItem("Bilgisayara kaydet", () => _actions.SaveToComputer(file)));
+        item.Items.Add(copyLink);
+        item.Items.Add(CreateItem("Klasörde göster", () => _actions.ShowInFolder(file)));
+
+        // Alt menüsü olan öğe Click olayı üretmez; satırın kendisine tıklamak belgeyi açar.
+        item.PreviewMouseLeftButtonUp += (_, e) =>
+        {
+            if (!ReferenceEquals(OwningMenuItem(e.OriginalSource as DependencyObject), item))
+                return;
+
+            e.Handled = true;
+            _icon.ContextMenu!.IsOpen = false;
+            _actions.OpenRecent(file);
+        };
         return item;
+    }
+
+    private static StackPanel CreateRecentHeader(RecentFile file)
+    {
+        // Düz metin başlıkta WPF alt çizgiyi kısayol sayıp dosya adından siler.
+        var name = new TextBlock
+        {
+            Text = Path.GetFileName(file.Path),
+            MaxWidth = MaxFileNameWidth,
+            TextTrimming = TextTrimming.CharacterEllipsis,
+        };
+        var opened = new TextBlock
+        {
+            Text = file.OpenedAgo(DateTime.UtcNow),
+            FontSize = 12,
+            Opacity = 0.7,
+        };
+
+        var header = new StackPanel();
+        header.Children.Add(name);
+        header.Children.Add(opened);
+        return header;
+    }
+
+    private static MenuItem? OwningMenuItem(DependencyObject? element)
+    {
+        while (element is not null and not MenuItem)
+        {
+            element = element is System.Windows.Media.Visual
+                ? System.Windows.Media.VisualTreeHelper.GetParent(element)
+                : LogicalTreeHelper.GetParent(element);
+        }
+
+        return element as MenuItem;
     }
 
     private static MenuItem CreateItem(string header, Action action)

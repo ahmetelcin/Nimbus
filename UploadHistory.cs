@@ -5,7 +5,21 @@ namespace Nimbus;
 // SyncedGoogleTicks: yerel dosyanın eşit olduğu son Google sürümünün değişiklik zamanı.
 internal sealed record UploadRecord(long Length, long LastWriteUtcTicks, string FileId, long LastOpenedUtcTicks = 0, long SyncedGoogleTicks = 0);
 
-internal sealed record RecentFile(string Path, string FileId, DateTime OpenedUtc);
+internal sealed record RecentFile(string Path, string FileId, DateTime OpenedUtc)
+{
+    public string OpenedAgo(DateTime utcNow)
+    {
+        var elapsed = utcNow - OpenedUtc;
+        return elapsed switch
+        {
+            { TotalMinutes: < 1 } => "az önce",
+            { TotalHours: < 1 } => $"{(int)elapsed.TotalMinutes} dakika önce",
+            { TotalDays: < 1 } => $"{(int)elapsed.TotalHours} saat önce",
+            { TotalDays: < 2 } => "dün",
+            _ => $"{(int)elapsed.TotalDays} gün önce",
+        };
+    }
+}
 
 // Hangi yerel dosyanın hangi Google kopyasına karşılık geldiğini tutar.
 internal static class UploadHistory

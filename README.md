@@ -65,6 +65,8 @@ You need the [.NET 10 SDK](https://dotnet.microsoft.com/download) and your own O
 
 Close Nimbus from the tray menu before you replace the exe. If you move it, its file type and startup entries update the next time it starts.
 
+While you're developing, run `pwsh -File dev.ps1`. It closes every running copy of Nimbus, builds the project and starts the new build. Add `-NoStart` to only build.
+
 ## Uninstall
 
 1. Open **Ayarlar…** from the tray menu. Under **Dosya türleri**, select **Bağlantıyı kaldır**, then turn off **Windows ile başlat** and **Sağ tık menüsü**.

@@ -81,7 +81,7 @@ internal sealed class AutoSync(Session session, Notifier notifier, Func<Func<Tas
                     LocalFiles.TryDelete(download);
                 }
 
-                notifier.ShowQuietInfo(
+                notifier.ShowAutoSaved(
                     file.FileId,
                     "Otomatik kaydedildi",
                     $"{Path.GetFileName(target)}, Google'daki sürümle güncellendi.");

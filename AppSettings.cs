@@ -9,6 +9,16 @@ internal enum ReopenChoice
     StartOver,
 }
 
+// Çakışma, oturum ve hata bildirimleri bu listede yoktur; kapatılamazlar.
+internal enum OptionalNotification
+{
+    Progress,
+    Opened,
+    AutoSaved,
+    LinkCopied,
+    NewVersion,
+}
+
 internal sealed class AppSettings
 {
     public string? DriveFolderId { get; set; }
@@ -24,6 +34,8 @@ internal sealed class AppSettings
     public ReopenChoice ReopenChoice { get; set; } = ReopenChoice.Ask;
 
     public bool ExplorerMenu { get; set; } = true;
+
+    public HashSet<OptionalNotification> DisabledNotifications { get; set; } = [];
 
     public static AppSettings Load()
     {

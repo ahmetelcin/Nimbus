@@ -22,7 +22,12 @@ public partial class SettingsWindow : FluentWindow
         AutoSaveSwitch.IsChecked = settings.AutoSaveBack;
         ReopenChoiceBox.SelectedIndex = (int)settings.ReopenChoice;
         ExplorerMenuSwitch.IsChecked = settings.ExplorerMenu;
+
+        foreach (var toggle in new[] { ProgressSwitch, OpenedSwitch, AutoSavedSwitch, LinkCopiedSwitch, NewVersionSwitch })
+            toggle.IsChecked = !settings.DisabledNotifications.Contains(NotificationOf(toggle));
     }
+
+    private static OptionalNotification NotificationOf(ToggleSwitch toggle) => Enum.Parse<OptionalNotification>((string)toggle.Tag);
 
     private void ShowBrowser(string? path)
     {
@@ -82,6 +87,17 @@ public partial class SettingsWindow : FluentWindow
         settings.ExplorerMenu = enabled;
         settings.Save();
         ExplorerMenu.SetEnabled(enabled);
+    }
+
+    private void OnNotificationClick(object sender, RoutedEventArgs e)
+    {
+        var toggle = (ToggleSwitch)sender;
+        var settings = AppSettings.Load();
+        if (toggle.IsChecked == true)
+            settings.DisabledNotifications.Remove(NotificationOf(toggle));
+        else
+            settings.DisabledNotifications.Add(NotificationOf(toggle));
+        settings.Save();
     }
 
     private void OnLinkFileTypesClick(object sender, RoutedEventArgs e) => _linkFileTypes();

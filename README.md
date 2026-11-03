@@ -73,6 +73,10 @@ Close Nimbus from the tray menu before you replace the exe. If you move it, its 
 
 Files that Nimbus uploaded stay in the `Nimbus` folder in your Drive until you delete them.
 
+## Publish a release
+
+Always name the release zip `Nimbus-win-x64.zip`, with `Nimbus.exe` and `client_secret.json` at its top level. The website's download button links to `/releases/latest/download/Nimbus-win-x64.zip`, so a different name breaks it.
+
 ## License
 
 [MIT](LICENSE)

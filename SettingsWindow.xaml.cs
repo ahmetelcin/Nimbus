@@ -23,7 +23,12 @@ public partial class SettingsWindow : FluentWindow
         ReopenChoiceBox.SelectedIndex = (int)settings.ReopenChoice;
         ExplorerMenuSwitch.IsChecked = settings.ExplorerMenu;
 
-        foreach (var toggle in new[] { ProgressSwitch, OpenedSwitch, AutoSavedSwitch, LinkCopiedSwitch, NewVersionSwitch })
+        UpdateModeBox.SelectedIndex = (int)settings.UpdateMode;
+        UpdateText.Text = UpdateInstaller.CanSelfUpdate
+            ? $"Sürüm {UpdateInstaller.CurrentVersion}. Yalnızca imzası doğrulanan sürümler kurulur."
+            : $"Sürüm {UpdateInstaller.CurrentVersion}. Geliştirme derlemesi kendini güncellemez.";
+
+        foreach (var toggle in new[] { ProgressSwitch, OpenedSwitch, AutoSavedSwitch, LinkCopiedSwitch })
             toggle.IsChecked = !settings.DisabledNotifications.Contains(NotificationOf(toggle));
     }
 
@@ -87,6 +92,13 @@ public partial class SettingsWindow : FluentWindow
         settings.ExplorerMenu = enabled;
         settings.Save();
         ExplorerMenu.SetEnabled(enabled);
+    }
+
+    private void OnUpdateModeChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        var settings = AppSettings.Load();
+        settings.UpdateMode = (UpdateMode)UpdateModeBox.SelectedIndex;
+        settings.Save();
     }
 
     private void OnNotificationClick(object sender, RoutedEventArgs e)

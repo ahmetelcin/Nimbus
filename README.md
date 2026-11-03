@@ -77,10 +77,19 @@ Files that Nimbus uploaded stay in the `Nimbus` folder in your Drive until you d
 
 ## Publish a release
 
-Every release needs these two files:
+Every release needs these three files:
 
 - `Nimbus-win-x64.zip`, with `Nimbus.exe` and `client_secret.json` at its top level. The website's download button links to `/releases/latest/download/Nimbus-win-x64.zip`, so a different name breaks it.
-- `Nimbus.exe.sha256`, with the SHA-256 hash of that `Nimbus.exe`. Nimbus checks this hash before it installs an update, and won't install the update if the file is missing or the hash doesn't match.
+- `Nimbus.exe.sha256`, with the SHA-256 hash of that `Nimbus.exe`.
+- `Nimbus.exe.sig`, with the Ed25519 signature of that hash.
+
+Nimbus won't install an update if either file is missing, or if the hash or signature doesn't match. To create both files, sign the exact exe that goes in the zip:
+
+```powershell
+dotnet run --project tools\NimbusSign -- sign publish\Nimbus.exe
+```
+
+The private key is in `%USERPROFILE%\.nimbus\update-signing.key`. It must stay outside this repository. Create it once with `dotnet run --project tools\NimbusSign -- keygen --source UpdateKey.cs`, which also writes the public key into `UpdateKey.cs`. Back it up, because installed copies can't update themselves without it.
 
 ## License
 

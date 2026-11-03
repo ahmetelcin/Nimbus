@@ -6,3 +6,6 @@ publish/
 
 # OAuth kimlik bilgileri repoya girmez
 client_secret*.json
+
+# Güncelleme imzalama anahtarı repoya girmez
+*.key

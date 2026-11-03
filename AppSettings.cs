@@ -16,7 +16,13 @@ internal enum OptionalNotification
     Opened,
     AutoSaved,
     LinkCopied,
-    NewVersion,
+}
+
+internal enum UpdateMode
+{
+    Ask,
+    Automatic,
+    Off,
 }
 
 internal sealed class AppSettings
@@ -36,6 +42,10 @@ internal sealed class AppSettings
     public bool ExplorerMenu { get; set; } = true;
 
     public HashSet<OptionalNotification> DisabledNotifications { get; set; } = [];
+
+    public UpdateMode UpdateMode { get; set; } = UpdateMode.Ask;
+
+    public long LastUpdateCheckUtcTicks { get; set; }
 
     public static AppSettings Load()
     {

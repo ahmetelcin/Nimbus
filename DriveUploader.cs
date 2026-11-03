@@ -87,6 +87,23 @@ internal sealed class DriveUploader(UserCredential credential) : IDisposable
     public async Task ShareWithAnyoneAsync(string fileId) =>
         await _service.Permissions.Create(new Permission { Type = "anyone", Role = "reader" }, fileId).ExecuteAsync();
 
+    // Herkese açık izin yoksa false döner.
+    public async Task<bool> StopSharingWithAnyoneAsync(string fileId)
+    {
+        var list = _service.Permissions.List(fileId);
+        list.Fields = "permissions(id,type)";
+        var permissions = await list.ExecuteAsync();
+
+        var removed = false;
+        foreach (var permission in permissions.Permissions.Where(p => p.Type == "anyone"))
+        {
+            await _service.Permissions.Delete(fileId, permission.Id).ExecuteAsync();
+            removed = true;
+        }
+
+        return removed;
+    }
+
     public async Task ExportToFileAsync(string fileId, string mimeType, string destination)
     {
         await using var output = File.Create(destination);

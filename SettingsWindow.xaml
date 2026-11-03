@@ -109,6 +109,20 @@
                 <ui:ToggleSwitch x:Name="ExplorerMenuSwitch" Click="OnExplorerMenuClick" />
             </ui:CardControl>
 
+            <ui:CardControl Margin="0,8,0,0" Icon="{ui:SymbolIcon ArrowDownload24}">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock FontTypography="BodyStrong" Text="Güncelleme" />
+                        <ui:TextBlock x:Name="UpdateText" Appearance="Secondary" TextWrapping="Wrap" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ComboBox x:Name="UpdateModeBox" Width="230" SelectionChanged="OnUpdateModeChanged">
+                    <ComboBoxItem Content="Sor" />
+                    <ComboBoxItem Content="Otomatik güncelle" />
+                    <ComboBoxItem Content="Kapalı" />
+                </ComboBox>
+            </ui:CardControl>
+
             <ui:TextBlock Margin="0,16,0,8" FontTypography="BodyStrong" Text="Bildirimler" />
 
             <ui:Card>
@@ -137,21 +151,13 @@
                         <ui:TextBlock VerticalAlignment="Center" Text="Otomatik kayıt güncellendi" TextWrapping="Wrap" />
                         <ui:ToggleSwitch x:Name="AutoSavedSwitch" Grid.Column="1" Click="OnNotificationClick" Tag="AutoSaved" />
                     </Grid>
-                    <Grid Margin="0,0,0,12">
+                    <Grid Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <ui:TextBlock VerticalAlignment="Center" Text="Bağlantı kopyalandı" TextWrapping="Wrap" />
                         <ui:ToggleSwitch x:Name="LinkCopiedSwitch" Grid.Column="1" Click="OnNotificationClick" Tag="LinkCopied" />
-                    </Grid>
-                    <Grid Margin="0,0,0,16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <ui:TextBlock VerticalAlignment="Center" Text="Yeni sürüm" TextWrapping="Wrap" />
-                        <ui:ToggleSwitch x:Name="NewVersionSwitch" Grid.Column="1" Click="OnNotificationClick" Tag="NewVersion" />
                     </Grid>
 
                     <Grid Margin="0,0,0,12">

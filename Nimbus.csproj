@@ -20,12 +20,14 @@
   <ItemGroup>
     <Using Include="System.IO" />
     <Using Include="System.Net.Http" />
+    <Compile Remove="tools/**" />
     <None Update="client_secret.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
     <Resource Include="Assets\Nimbus.ico" />
     <Resource Include="Assets\Nimbus.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
     <PackageReference Include="Google.Apis.Auth" Version="1.78.0" />
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.77.0.4301" />
     <PackageReference Include="H.NotifyIcon.Wpf" Version="2.4.1" />

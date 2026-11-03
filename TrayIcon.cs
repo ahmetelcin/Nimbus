@@ -16,6 +16,7 @@ internal sealed record TrayActions(
     Action<RecentFile> SaveToComputer,
     Action<RecentFile> CopyPrivateLink,
     Action<RecentFile> CopyPublicLink,
+    Action<RecentFile> StopSharing,
     Action<RecentFile> ShowInFolder,
     Action Exit);
 
@@ -132,6 +133,7 @@ internal sealed class TrayIcon : IDisposable
         item.Items.Add(CreateItem("Aç", () => _actions.OpenRecent(file)));
         item.Items.Add(CreateItem("Bilgisayara kaydet", () => _actions.SaveToComputer(file)));
         item.Items.Add(copyLink);
+        item.Items.Add(CreateItem("Paylaşımı kapat", () => _actions.StopSharing(file)));
         item.Items.Add(CreateItem("Klasörde göster", () => _actions.ShowInFolder(file)));
 
         // Alt menüsü olan öğe Click olayı üretmez; satırın kendisine tıklamak belgeyi açar.

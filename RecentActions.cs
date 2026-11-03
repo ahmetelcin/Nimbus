@@ -47,6 +47,17 @@ internal sealed class RecentActions(Session session, Notifier notifier)
         notifier.ShowOptional(OptionalNotification.LinkCopied, "Bağlantı kopyalandı", $"{name}: bağlantıya sahip herkes görüntüleyebilir.");
     }
 
+    public async Task StopSharingAsync(RecentFile file)
+    {
+        using var drive = new DriveUploader(await session.GetCredentialAsync());
+        await GetStateAsync(drive, file);
+        var name = Path.GetFileName(file.Path);
+        if (await drive.StopSharingWithAnyoneAsync(file.FileId))
+            notifier.ShowInfo("Paylaşım kapatıldı", $"{name}: bağlantıya sahip olanlar artık görüntüleyemez.");
+        else
+            notifier.ShowInfo("Paylaşım zaten kapalı", $"{name} herkese açık değil.");
+    }
+
     public static void ShowInFolder(RecentFile file)
     {
         if (File.Exists(file.Path))

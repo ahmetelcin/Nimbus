@@ -23,6 +23,8 @@ public partial class App : Application
     private SaveBack _saveBack = null!;
     private RecentActions _recent = null!;
     private AutoSync _autoSync = null!;
+    private Updater _updater = null!;
+    private int _pendingWork;
     private TrayIcon _tray = null!;
     private SignInWindow? _signInWindow;
     private SettingsWindow? _settingsWindow;
@@ -44,7 +46,9 @@ public partial class App : Application
         _saveBack = new SaveBack(_session, _notifier);
         _recent = new RecentActions(_session, _notifier);
         // Bildirim düğmesi başka iş parçacığından gelir; iş kuyruğu UI iş parçacığına aittir.
-        _autoSync = new AutoSync(_session, _notifier, run => Dispatcher.InvokeAsync(() => Enqueue(run)).Task.Unwrap());
+        Func<Func<Task>, Task<bool>> enqueueFromAnyThread = run => Dispatcher.InvokeAsync(() => Enqueue(run)).Task.Unwrap();
+        _autoSync = new AutoSync(_session, _notifier, enqueueFromAnyThread);
+        _updater = new Updater(_notifier, enqueueFromAnyThread, () => _pendingWork == 1, RestartAfterUpdate);
         _tray = new TrayIcon(new TrayActions(
             SignIn: () => _ = SignInAsync(),
             SignOut: () => _ = Enqueue(_session.SignOutAsync),
@@ -55,6 +59,7 @@ public partial class App : Application
             SaveToComputer: file => _ = Enqueue(() => _saveBack.SaveAsync(file)),
             CopyPrivateLink: file => _ = Enqueue(() => _recent.CopyPrivateLinkAsync(file)),
             CopyPublicLink: file => _ = Enqueue(() => _recent.CopyPublicLinkAsync(file)),
+            StopSharing: file => _ = Enqueue(() => _recent.StopSharingAsync(file)),
             ShowInFolder: file => _ = Enqueue(() =>
             {
                 RecentActions.ShowInFolder(file);
@@ -79,6 +84,11 @@ public partial class App : Application
         foreach (var path in InitialPaths)
             _ = Enqueue(() => _opener.OpenAsync(path));
         _ = _autoSync.RunAsync(_shutdown.Token);
+
+        if (File.Exists(UpdateInstaller.OldPath(Environment.ProcessPath!)))
+            _notifier.ShowInfo("Nimbus güncellendi", $"Şu anki sürüm: {UpdateInstaller.CurrentVersion}");
+        _ = UpdateInstaller.DeleteOldAsync(Environment.ProcessPath!);
+        _ = _updater.RunAsync(_shutdown.Token);
     }
 
     private void OnMessage(string message)
@@ -190,6 +200,7 @@ public partial class App : Application
     private Task<bool> Enqueue(Func<Task> run)
     {
         var done = new TaskCompletionSource<bool>();
+        _pendingWork++;
         _work.Writer.TryWrite(new WorkItem(run, done));
         return done.Task;
     }
@@ -215,6 +226,7 @@ public partial class App : Application
                 item.Done.SetResult(false);
             }
 
+            _pendingWork--;
             RefreshRecentFiles();
         }
     }
@@ -223,10 +235,33 @@ public partial class App : Application
 
     private void ExitApp()
     {
+        ReleaseResources();
+        Shutdown();
+    }
+
+    private void RestartAfterUpdate(string exe)
+    {
+        ReleaseResources();
+        // Yeni süreç, tek örnek kilidi bırakılmadan başlarsa kendini ikinci örnek sayıp kapanır.
+        Instance.Dispose();
+        try
+        {
+            Process.Start(new ProcessStartInfo(exe) { UseShellExecute = false });
+        }
+        catch (System.ComponentModel.Win32Exception)
+        {
+            UpdateInstaller.Rollback(exe);
+            Process.Start(new ProcessStartInfo(exe) { UseShellExecute = false });
+        }
+
+        Shutdown();
+    }
+
+    private void ReleaseResources()
+    {
         _shutdown.Cancel();
         SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
         _notifier.ClearProgress();
         _tray.Dispose();
-        Shutdown();
     }
 }

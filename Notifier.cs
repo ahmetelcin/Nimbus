@@ -16,6 +16,12 @@ internal enum ConflictChoice
     KeepBoth,
 }
 
+internal enum UpdateChoice
+{
+    Now,
+    Always,
+}
+
 internal sealed class Notifier
 {
     private const string AppTitle = "Nimbus";
@@ -24,7 +30,7 @@ internal sealed class Notifier
     private const string ProgressTag = "upload";
 
     private readonly ToastNotifier _notifier;
-    private readonly ConcurrentDictionary<string, ToastNotification> _conflictToasts = new();
+    private readonly ConcurrentDictionary<string, ToastNotification> _choiceToasts = new();
     private string? _uploadingFile;
     private bool _progressToastShown;
     private uint _sequence;
@@ -78,16 +84,46 @@ internal sealed class Notifier
             </toast>
             """);
 
-        var toast = new ToastNotification(xml) { Tag = TagFor("conflict", key), Group = Group };
+        ShowChoiceToast(xml, "conflict", key, onChoice);
+    }
+
+    // onChoice başka bir iş parçacığından çağrılabilir.
+    public void ShowUpdateAvailable(string version, Action<UpdateChoice> onChoice)
+    {
+        var xml = new XmlDocument();
+        xml.LoadXml($"""
+            <toast scenario="reminder">
+              <visual>
+                <binding template="ToastGeneric">
+                  <text>{SecurityElement.Escape($"Nimbus v{version} çıktı")}</text>
+                  <text>Güncelleme kurulunca Nimbus kısa süreliğine kapanıp yeniden açılır.</text>
+                </binding>
+              </visual>
+              <actions>
+                <action activationType="foreground" arguments="{UpdateChoice.Now}" content="Şimdi güncelle" />
+                <action activationType="foreground" arguments="{UpdateChoice.Always}" content="Her zaman otomatik güncelle" />
+                <action activationType="system" arguments="dismiss" content="Sonra" />
+              </actions>
+            </toast>
+            """);
+
+        ShowChoiceToast(xml, "update", "update", onChoice);
+    }
+
+    private void ShowChoiceToast<TChoice>(XmlDocument xml, string kind, string key, Action<TChoice> onChoice)
+        where TChoice : struct, Enum
+    {
+        var tag = TagFor(kind, key);
+        var toast = new ToastNotification(xml) { Tag = tag, Group = Group };
         toast.Activated += (_, args) =>
         {
-            _conflictToasts.TryRemove(key, out ToastNotification? _);
-            if (args is ToastActivatedEventArgs { Arguments: var arguments } && Enum.TryParse<ConflictChoice>(arguments, out var choice))
+            _choiceToasts.TryRemove(tag, out ToastNotification? _);
+            if (args is ToastActivatedEventArgs { Arguments: var arguments } && Enum.TryParse<TChoice>(arguments, out var choice))
                 onChoice(choice);
         };
 
         // Olay yalnızca nesne yaşadığı sürece gelir.
-        _conflictToasts[key] = toast;
+        _choiceToasts[tag] = toast;
         TryShow(toast);
     }
 

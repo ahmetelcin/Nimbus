@@ -9,6 +9,7 @@ namespace Nimbus;
 internal static class GoogleSignIn
 {
     private const string UserId = "user";
+    private const string EmbeddedSecretName = "client_secret.json";
 
     // Tarayıcı kapatılırsa giriş sonsuza dek beklemesin.
     private static readonly TimeSpan LoginTimeout = TimeSpan.FromMinutes(5);
@@ -91,15 +92,23 @@ internal static class GoogleSignIn
         DataStore = TokenStore(),
     });
 
+    // Exe'nin yanındaki dosya gömülü olanın önüne geçer; böylece kendi istemcisini kullanmak isteyen derleme gerektirmez.
+    private static Stream? OpenClientSecrets() =>
+        File.Exists(AppPaths.ClientSecretFile)
+            ? File.OpenRead(AppPaths.ClientSecretFile)
+            : typeof(GoogleSignIn).Assembly.GetManifestResourceStream(EmbeddedSecretName);
+
     private static ClientSecrets LoadClientSecrets()
     {
-        if (!File.Exists(AppPaths.ClientSecretFile))
-            throw new UserMessageException(Strings.SecretMissing);
-
         ClientSecrets? secrets = null;
         try
         {
-            secrets = GoogleClientSecrets.FromFile(AppPaths.ClientSecretFile).Secrets;
+            using var stream = OpenClientSecrets() ?? throw new UserMessageException(Strings.SecretMissing);
+            secrets = GoogleClientSecrets.FromStream(stream).Secrets;
+        }
+        catch (UserMessageException)
+        {
+            throw;
         }
         catch (Exception)
         {

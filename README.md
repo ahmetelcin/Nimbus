@@ -17,7 +17,7 @@ Website: <https://ahmetelcin.github.io/Nimbus/>. Privacy policy: <https://ahmete
 You need Windows 10 version 2004 or later and a Google account. No other software is required.
 
 1. Download the latest version from [Releases](https://github.com/ahmetelcin/Nimbus/releases).
-2. Extract `Nimbus.exe` and `client_secret.json` into the same folder, for example `%LOCALAPPDATA%\Programs\Nimbus`.
+2. Download `Nimbus.exe` and move it to a folder you can write to, for example `%LOCALAPPDATA%\Programs\Nimbus`.
 3. Run `Nimbus.exe` and select **Sign in with Google**.
 4. In the tray menu, select **Link file types…**, then set Nimbus as the default app for each file type you want. Windows doesn't let apps make this choice for you.
 
@@ -27,20 +27,26 @@ Nimbus is available in English and Turkish. It uses Turkish if that's your Windo
 
 Microsoft Defender SmartScreen shows this warning because `Nimbus.exe` isn't code-signed. To continue, select **More info**, then **Run anyway**. You only need to do this once for each downloaded version.
 
+### Updates
+
+Nimbus checks for a new version once a day and installs only versions with a valid signature. To choose whether it asks first, updates automatically or doesn't check, go to **Settings…** > **Updates**.
+
+If you have v1.0.0, it can't update itself. Select **Close Nimbus** in the tray menu, then replace your `Nimbus.exe` with the new one. Your sign-in and settings stay, and you can delete `client_secret.json` from that folder.
+
 ### Google sign-in
 
 Your browser opens Google's sign-in page, which shows the Nimbus name and asks for permission to access Drive files. That's the only permission Nimbus asks for (`drive.file`). It limits Nimbus to files it created itself, so it can't see the rest of your Drive.
 
 ## Privacy
 
-Nimbus has no server and sends nothing to its developer. Your files go straight to your own Drive, and your sign-in token stays on your PC in `%APPDATA%\Nimbus`. You can remove Nimbus's access at any time from your [Google account permissions](https://myaccount.google.com/permissions). See the [privacy policy](https://ahmetelcin.github.io/Nimbus/privacy.html) for details.
+Nimbus has no server and sends nothing to its developer. Your files go straight to your own Drive, and your sign-in token and file backups stay on your PC in `%APPDATA%\Nimbus`. Nimbus also connects to GitHub to check for updates, unless you turn that off. You can remove Nimbus's access at any time from your [Google account permissions](https://myaccount.google.com/permissions). See the [privacy policy](https://ahmetelcin.github.io/Nimbus/privacy.html) for details.
 
 ## Build from source
 
 You need the [.NET 10 SDK](https://dotnet.microsoft.com/download) and your own OAuth client:
 
 1. In the [Google Cloud console](https://console.cloud.google.com/), enable the Google Drive API and create an OAuth client of type **Desktop app**.
-2. Save its details as `client_secret.json` in the project folder. Git ignores this file, so don't commit it under another name.
+2. Save its details as `client_secret.json` in the project folder. The build embeds it in the exe, and Release builds fail without it. Git ignores this file, so don't commit it under another name.
 
    ```json
    {
@@ -60,8 +66,10 @@ You need the [.NET 10 SDK](https://dotnet.microsoft.com/download) and your own O
    dotnet publish -c Release -o publish
    $target = "$env:LOCALAPPDATA\Programs\Nimbus"
    New-Item -ItemType Directory -Force $target | Out-Null
-   Copy-Item publish\Nimbus.exe, publish\client_secret.json $target
+   Copy-Item publish\Nimbus.exe $target
    ```
+
+   To use a different OAuth client without rebuilding, put its `client_secret.json` next to `Nimbus.exe`. That file takes priority over the embedded one.
 
 Close Nimbus from the tray menu before you replace the exe. If you move it, its file type and startup entries update the next time it starts.
 
@@ -79,13 +87,13 @@ Files that Nimbus uploaded stay in the `Nimbus` folder in your Drive until you d
 
 ## Publish a release
 
-Every release needs these three files:
+Every release has only these three files:
 
-- `Nimbus-win-x64.zip`, with `Nimbus.exe` and `client_secret.json` at its top level. The website's download button links to `/releases/latest/download/Nimbus-win-x64.zip`, so a different name breaks it.
+- `Nimbus.exe`. The website's download button links to `/releases/latest/download/Nimbus.exe`, so a different name breaks it.
 - `Nimbus.exe.sha256`, with the SHA-256 hash of that `Nimbus.exe`.
 - `Nimbus.exe.sig`, with the Ed25519 signature of that hash.
 
-Nimbus won't install an update if either file is missing, or if the hash or signature doesn't match. To create both files, sign the exact exe that goes in the zip:
+Nimbus won't install an update if any of them is missing, or if the hash or signature doesn't match. To create the last two files, sign the exact exe you'll publish:
 
 ```powershell
 dotnet run --project tools\NimbusSign -- sign publish\Nimbus.exe

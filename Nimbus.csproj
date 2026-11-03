@@ -9,6 +9,7 @@
     <RootNamespace>Nimbus</RootNamespace>
     <AssemblyName>Nimbus</AssemblyName>
     <Product>Nimbus</Product>
+    <Version>1.1.0</Version>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -24,7 +25,8 @@
     <Using Include="System.IO" />
     <Using Include="System.Net.Http" />
     <Compile Remove="tools/**" />
-    <None Update="client_secret.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <!-- Dosya repoda değildir; derleyen kişinin kendi OAuth istemcisi exe'ye gömülür. -->
+    <EmbeddedResource Include="client_secret.json" LogicalName="client_secret.json" Condition="Exists('client_secret.json')" />
     <Resource Include="Assets\Nimbus.ico" />
     <Resource Include="Assets\Nimbus.png" />
   </ItemGroup>
@@ -36,5 +38,10 @@
     <PackageReference Include="H.NotifyIcon.Wpf" Version="2.4.1" />
     <PackageReference Include="WPF-UI" Version="4.3.0" />
   </ItemGroup>
+
+  <!-- Gömülü istemcisi olmayan release exe'si Google'a giriş yapamaz. -->
+  <Target Name="RequireClientSecret" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' == 'Release' And !Exists('client_secret.json')">
+    <Error Text="Release builds need client_secret.json in the project folder. See Build from source in README.md." />
+  </Target>
 
 </Project>

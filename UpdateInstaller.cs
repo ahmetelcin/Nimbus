@@ -1,13 +1,11 @@
 using System.Diagnostics;
-using System.IO.Compression;
 using System.Text.Json;
 
 namespace Nimbus;
 
-// Güncellemenin ağ dışındaki adımları: paketi açma, doğrulama ve exe değişimi.
+// Güncellemenin ağ dışındaki adımları: doğrulama ve exe değişimi.
 internal static class UpdateInstaller
 {
-    private const string ExeName = "Nimbus.exe";
     private const int DeleteAttempts = 20;
     private static readonly TimeSpan DeleteRetryDelay = TimeSpan.FromMilliseconds(500);
 
@@ -40,22 +38,6 @@ internal static class UpdateInstaller
         tag is not null && Version.TryParse(tag.TrimStart('v'), out var version) ? (tag, version) : null;
 
     public static bool IsNewer(Version candidate, Version current) => candidate > current;
-
-    // Pakette yalnızca exe kullanılır: client_secret.json imzalı değildir ve yerel kopyası korunur.
-    public static void ExtractExe(string zipPath, string destination)
-    {
-        try
-        {
-            using var zip = ZipFile.OpenRead(zipPath);
-            var entry = zip.Entries.FirstOrDefault(e => e.FullName == ExeName)
-                ?? throw new UserMessageException(Strings.UpdateNoExeInPackage);
-            entry.ExtractToFile(destination, overwrite: true);
-        }
-        catch (InvalidDataException)
-        {
-            throw new UserMessageException(Strings.UpdatePackageDamaged);
-        }
-    }
 
     // Exe'nin içindeki sürüm imzanın kapsamındadır; eski imzalı exe yeni etiketle sunulsa da kurulmaz.
     public static void VerifyPackage(string exePath, string hashFileText, string signatureText, string publicKey, Version tagVersion, Version currentVersion)

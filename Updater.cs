@@ -19,7 +19,7 @@ internal sealed class Updater(
 {
     private const string RepoUrl = "https://github.com/ahmetelcin/Nimbus/releases/download/";
     private const string ApiUrl = "https://api.github.com/repos/ahmetelcin/Nimbus/releases/latest";
-    private const string ZipName = "Nimbus-win-x64.zip";
+    private const string ExeName = "Nimbus.exe";
     private const string HashName = "Nimbus.exe.sha256";
     private const string SignatureName = "Nimbus.exe.sig";
 
@@ -213,15 +213,13 @@ internal sealed class Updater(
             return;
 
         var newExe = UpdateInstaller.NewPath(_exe);
-        var zip = Path.Combine(Path.GetTempPath(), $"nimbus-update-{Guid.NewGuid():N}.zip");
         try
         {
             using var timeout = new CancellationTokenSource(DownloadTimeout);
             var hash = await DownloadTextAsync(tag, HashName, timeout.Token);
             var signature = await DownloadTextAsync(tag, SignatureName, timeout.Token);
-            await DownloadFileAsync(tag, ZipName, zip, timeout.Token);
+            await DownloadFileAsync(tag, ExeName, newExe, timeout.Token);
 
-            UpdateInstaller.ExtractExe(zip, newExe);
             UpdateInstaller.VerifyPackage(newExe, hash, signature, UpdateKey.PublicKey, version, UpdateInstaller.CurrentVersion);
 
             _readyToApply = true;
@@ -245,7 +243,6 @@ internal sealed class Updater(
         }
         finally
         {
-            LocalFiles.TryDelete(zip);
             Interlocked.Exchange(ref _installing, 0);
             // Kurulum başarısızsa satır yeniden tıklanabilir olur.
             _userInstall &= _readyToApply;

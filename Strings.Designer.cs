@@ -204,8 +204,6 @@ internal static class Strings
     public static string UpdateDownloadFailed => Get("UpdateDownloadFailed");
     public static string UpdateFolderNotWritable => Get("UpdateFolderNotWritable");
     public static string UpdateHashMismatch => Get("UpdateHashMismatch");
-    public static string UpdateNoExeInPackage => Get("UpdateNoExeInPackage");
-    public static string UpdatePackageDamaged => Get("UpdatePackageDamaged");
     public static string UpdateSignatureInvalid => Get("UpdateSignatureInvalid");
     public static string UpdateVersionMismatch => Get("UpdateVersionMismatch");
     public static string UpdateWindowTitle => Get("UpdateWindowTitle");

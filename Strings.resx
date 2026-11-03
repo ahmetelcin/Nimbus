@@ -585,12 +585,6 @@
   <data name="UpdateHashMismatch" xml:space="preserve">
     <value>The update's SHA-256 hash didn't match, so it wasn't installed.</value>
   </data>
-  <data name="UpdateNoExeInPackage" xml:space="preserve">
-    <value>The update package has no Nimbus.exe, so it wasn't installed.</value>
-  </data>
-  <data name="UpdatePackageDamaged" xml:space="preserve">
-    <value>The update package is damaged, so it wasn't installed.</value>
-  </data>
   <data name="UpdateSignatureInvalid" xml:space="preserve">
     <value>The update's signature couldn't be verified, so it wasn't installed.</value>
   </data>

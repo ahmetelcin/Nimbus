@@ -179,6 +179,21 @@ a {
   margin: 0 0 12px;
 }
 
+.features {
+  max-width: 38em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.features li {
+  padding-bottom: 16px;
+}
+
+.features li:last-child {
+  padding-bottom: 0;
+}
+
 .steps {
   max-width: 38em;
   margin: 0;

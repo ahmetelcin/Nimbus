@@ -2,15 +2,30 @@
 
 Nimbus is a small Windows tray app that opens Office files in Google's editors. Double-click a `.pptx`, `.docx` or `.xlsx` file and Nimbus uploads it to your own Google Drive, converts it, and opens it in Google Slides, Docs or Sheets in your browser.
 
-If you open the same file again and it hasn't changed, Nimbus opens the existing Google copy instead of uploading a new one.
-
-| Opens in | File types |
-|---|---|
-| Google Slides | `ppt`, `pptx`, `odp` |
-| Google Docs | `doc`, `docx`, `odt`, `rtf` |
-| Google Sheets | `xls`, `xlsx`, `ods`, `csv` |
+<!-- Demo: remove this comment's markers after adding docs/demo.gif
+![Nimbus demo](docs/demo.gif)
+-->
 
 Website: <https://ahmetelcin.github.io/Nimbus/>. Privacy policy: <https://ahmetelcin.github.io/Nimbus/privacy.html>.
+
+## Features
+
+- **Opens Office files in Google's editors:**
+
+  | Opens in | File types |
+  |---|---|
+  | Google Slides | `ppt`, `pptx`, `odp` |
+  | Google Docs | `doc`, `docx`, `odt`, `rtf` |
+  | Google Sheets | `xls`, `xlsx`, `ods`, `csv` |
+
+- **No duplicate uploads:** if a file hasn't changed, Nimbus opens the existing Google copy.
+- **Saves edits back to your PC:** Google edits to documents opened in the last 24 hours are written back to the local file automatically. You can turn this off.
+- **Conflict handling:** if a file changed both on Google and on your PC, nothing is overwritten until you choose to keep the local file, use Google's version, or keep both.
+- **Link sharing:** copy a private link or a link anyone can view, and stop sharing later.
+- **Windows integration:** tray menu, optional "Open with Nimbus" in the right-click menu, and optional start with Windows.
+- **Limited Drive access:** Nimbus uses the `drive.file` permission, so it can't see the rest of your Drive.
+- **Signed updates:** Nimbus installs only updates with a valid signature.
+- **English and Turkish interface.**
 
 ## Install
 
@@ -36,6 +51,14 @@ If you have v1.0.0, it can't update itself. Select **Close Nimbus** in the tray 
 ### Google sign-in
 
 Your browser opens Google's sign-in page, which shows the Nimbus name and asks for permission to access Drive files. That's the only permission Nimbus asks for (`drive.file`). It limits Nimbus to files it created itself, so it can't see the rest of your Drive.
+
+## Usage
+
+- **Open a file:** double-click a linked file type, or right-click a supported file and select **Open with Nimbus**.
+- **Work with recent files:** in the tray menu, open **Recent files** and pick a file to **Open**, **Save to computer**, **Copy link**, **Stop sharing** or **Show in folder**.
+- **Older formats:** `.ppt`, `.doc` and `.xls` files are saved back as `.pptx`, `.docx` and `.xlsx`, because Google can't export to the older formats.
+- **Clean up:** **Clean up old files** moves files that have been unchanged for a set number of days to the trash. The default is 30 days, and you can change it in **Settings…**.
+- **Other options:** **Settings…** also has the browser to open files in, what happens when you reopen a file whose Google copy changed, notifications, updates and language.
 
 ## Privacy
 
